@@ -39,7 +39,7 @@ spec:
   gcp:
     sqlInstances:
       - type: POSTGRES_14
-        tier: {{ db_tier }}
+        tier: {{db_tier}}
         diskType: SSD
         highAvailability: true
         diskSize: 10
@@ -52,7 +52,7 @@ spec:
           day: 2
           hour: 2
   env:
-  {{#each env}}
-     - name: {{@key}}
-       value: {{this}}
+  { { #each env}}
+      - name: {{@key } }
+  value: {{this}}
   {{/each}}

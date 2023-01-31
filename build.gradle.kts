@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("org.springframework.boot") version "3.0.2"
     id("io.spring.dependency-management") version "1.1.0"
-    id("org.jlleitschuh.gradle.ktlint") version "11.1.0"
+    id("org.jlleitschuh.gradle.ktlint") version "11.2.0"
     kotlin("jvm") version "1.8.10"
     kotlin("plugin.spring") version "1.8.10"
 }
@@ -24,30 +24,22 @@ repositories {
 }
 
 val testContainersVersion = "1.17.6"
-val logstashLogbackEncoderVersion = "7.2"
+val logstashLogbackEncoderVersion = "7.3"
 val kluentVersion = "1.72"
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter")
-    implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
+    implementation(kotlin("stdlib"))
+    implementation(kotlin("reflect"))
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.kafka:spring-kafka")
     implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
-    implementation("org.slf4j:slf4j-api")
-    implementation("org.springframework.boot:spring-boot-starter-logging")
-    implementation("net.logstash.logback:logstash-logback-encoder:$logstashLogbackEncoderVersion")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("org.postgresql:postgresql")
-    implementation("org.flywaydb:flyway-core")
-    implementation("org.hibernate.validator:hibernate-validator")
-
     implementation("org.springframework.boot:spring-boot-starter-actuator")
-    implementation("io.micrometer:micrometer-registry-prometheus")
+    implementation("org.flywaydb:flyway-core")
+    implementation("org.postgresql:postgresql")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("net.logstash.logback:logstash-logback-encoder:$logstashLogbackEncoderVersion")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.testcontainers:kafka:$testContainersVersion")
-    testImplementation("org.testcontainers:junit-jupiter:$testContainersVersion")
     testImplementation("org.testcontainers:postgresql:$testContainersVersion")
     testImplementation("org.awaitility:awaitility")
     testImplementation("org.amshove.kluent:kluent:$kluentVersion")
