@@ -19,6 +19,8 @@ spring:
 
 management:
   endpoint:
+    path-mapping:
+      prometheus: "/internal/prometheus"
     prometheus.enabled: true
     health.probes.enabled: true
   endpoints.web:
