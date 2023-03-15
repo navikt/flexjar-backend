@@ -18,6 +18,8 @@ spring:
       maximum-pool-size: 5
 
 management:
+  management:
+    context-path: "/"
   endpoint:
     prometheus.enabled: true
     health.probes.enabled: true

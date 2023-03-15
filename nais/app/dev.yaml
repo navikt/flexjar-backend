@@ -2,7 +2,7 @@ ingress: https://flex-frontend-feilmeldinger.ekstern.dev.nav.no
 kafkaPool: nav-dev
 environment: dev
 replicas_min: 1
-replicas_max: 2
+replicas_max: 1
 db_tier: db-f1-micro
 env:
-  SPRING_PROFILES_ACTIVE: def
+  SPRING_PROFILES_ACTIVE: default
