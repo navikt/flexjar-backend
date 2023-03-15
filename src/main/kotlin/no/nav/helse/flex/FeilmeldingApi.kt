@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
-@RequestMapping("/api/v1")
+@RequestMapping("/syk/feilmeldinger/api/v1")
 @RestController
 class FeilmeldingApi {
 
