@@ -7,6 +7,8 @@ metadata:
     team: flex
 spec:
   image: {{image}}
+  ingresses:
+    - {{ingress}}
   replicas:
     min: {{replicas_min}}
     max: {{replicas_max}}
@@ -52,7 +54,7 @@ spec:
           day: 2
           hour: 2
   env:
-  { { #each env}}
-      - name: {{@key } }
-  value: {{this}}
+  {{#each env}}
+     - name: {{@key}}
+       value: "{{this}}"
   {{/each}}
