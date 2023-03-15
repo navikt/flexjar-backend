@@ -8,7 +8,7 @@ class IntegrationTest : FellesTestOppsett() {
 
     @Test
     fun postFeilmelding() {
-        mockMvc.perform(MockMvcRequestBuilders.post("/syk/feilmeldinger/api/v1/feilmelding"))
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/feilmelding"))
             .andExpect(MockMvcResultMatchers.status().isAccepted)
     }
 }
