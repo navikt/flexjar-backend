@@ -1,7 +1,7 @@
 server:
   port: 8080
   servlet:
-    context-path: /syk/feilmeldigner
+    context-path: /syk/feilmeldinger
 
 spring:
   main.banner-mode: 'off'
@@ -19,8 +19,6 @@ spring:
 
 management:
   endpoint:
-    path-mapping:
-      prometheus: "/internal/prometheus"
     prometheus.enabled: true
     health.probes.enabled: true
   endpoints.web:
