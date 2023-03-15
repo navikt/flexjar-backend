@@ -1,7 +1,5 @@
 server:
   port: 8080
-  servlet:
-    context-path: /syk/feilmeldinger
 
 spring:
   main.banner-mode: 'off'
@@ -18,7 +16,6 @@ spring:
       maximum-pool-size: 5
 
 management:
-  context-path: /
   endpoint:
     prometheus.enabled: true
     health.probes.enabled: true
