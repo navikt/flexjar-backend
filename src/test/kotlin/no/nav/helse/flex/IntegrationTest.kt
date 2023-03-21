@@ -26,7 +26,10 @@ class IntegrationTest : FellesTestOppsett() {
         val feilmeldingDto = FeilmeldingDto(
             requestId = "uuid-1",
             app = FrontendApp.SPINNSYN_FRONTEND.navn,
-            payload = "{\"foo\": \"foo\", \"bar\": \"bar\"}"
+            payload = "{\"foo\": \"foo\", \"bar\": \"bar\"}",
+            method = "GET",
+            responseCode = 200,
+            contentLength = 215512
         )
 
         val serialisertTilString = feilmeldingDto.serialisertTilString()
@@ -51,7 +54,10 @@ class IntegrationTest : FellesTestOppsett() {
         val feilmeldingDto = FeilmeldingDto(
             requestId = "uuid-1",
             app = "UKJENT",
-            payload = "{\"foo\": \"foo\", \"bar\": \"bar\"}"
+            payload = "{\"foo\": \"foo\", \"bar\": \"bar\"}",
+            method = "GET",
+            responseCode = 200,
+            contentLength = 215512
         )
 
         mockMvc.perform(

@@ -16,5 +16,8 @@ data class FeilmeldingDbRecord(
     val opprettet: OffsetDateTime,
     val requestId: String,
     val app: String,
-    val payload: String
+    val payload: String,
+    val method: String,
+    val responseCode: Int,
+    val contentLength: Int
 )
