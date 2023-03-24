@@ -47,6 +47,9 @@ class IntegrationTest : FellesTestOppsett() {
         lagretFeilmelding.requestId shouldBeEqualTo feilmeldingDto.requestId
         lagretFeilmelding.app shouldBeEqualTo feilmeldingDto.app
         lagretFeilmelding.payload shouldBeEqualTo feilmeldingDto.payload
+        lagretFeilmelding.method shouldBeEqualTo feilmeldingDto.method
+        lagretFeilmelding.responseCode shouldBeEqualTo feilmeldingDto.responseCode
+        lagretFeilmelding.payloadLength shouldBeEqualTo feilmeldingDto.payload.length
     }
 
     @Test

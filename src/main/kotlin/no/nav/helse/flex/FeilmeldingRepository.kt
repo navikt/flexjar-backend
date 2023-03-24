@@ -19,5 +19,6 @@ data class FeilmeldingDbRecord(
     val payload: String,
     val method: String,
     val responseCode: Int,
-    val contentLength: Int
+    val contentLength: Int,
+    val payloadLength: Int
 )

@@ -40,7 +40,8 @@ class FeilmeldingApi(
                     payload = feilmeldingDto.payload,
                     method = feilmeldingDto.method,
                     responseCode = feilmeldingDto.responseCode,
-                    contentLength = feilmeldingDto.contentLength
+                    contentLength = feilmeldingDto.contentLength,
+                    payloadLength = feilmeldingDto.payload.length
                 )
             )
         } catch (e: Exception) {
