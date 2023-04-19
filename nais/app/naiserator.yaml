@@ -31,11 +31,10 @@ spec:
     path: /internal/prometheus
   resources:
     limits:
-      cpu: 1000m
-      memory: 500Mi
+      memory: {{memory}}
     requests:
-      cpu: 500m
-      memory: 500Mi
+      cpu: {{cpu}}
+      memory: {{memory}}
   kafka:
     pool: {{kafkaPool}}
   gcp:
@@ -58,3 +57,7 @@ spec:
      - name: {{@key}}
        value: "{{this}}"
   {{/each}}
+https://nav-it:
+  slack:
+    com/archives/C04HE1B49JP/p1678187710648639?thread_ts=1677848190:
+      909109&cid=C04HE1B49JP:
