@@ -50,7 +50,3 @@ spec:
      - name: {{@key}}
        value: "{{this}}"
   {{/each}}
-https://nav-it:
-  slack:
-    com/archives/C04HE1B49JP/p1678187710648639?thread_ts=1677848190:
-      909109&cid=C04HE1B49JP:
