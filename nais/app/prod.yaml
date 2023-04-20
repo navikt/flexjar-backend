@@ -1,5 +1,4 @@
 ingress: https://www.nav.no/syk/feilmeldinger
-kafkaPool: nav-prod
 environment: prod
 replicas_min: 2
 replicas_max: 3

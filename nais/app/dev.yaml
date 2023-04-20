@@ -1,5 +1,4 @@
 ingress: https://www.ekstern.dev.nav.no/syk/feilmeldinger
-kafkaPool: nav-dev
 environment: dev
 replicas_min: 1
 replicas_max: 1
