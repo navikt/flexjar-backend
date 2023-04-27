@@ -1,4 +1,3 @@
-ingress: https://www.ekstern.dev.nav.no/syk/feilmeldinger
 environment: dev
 replicas_min: 1
 replicas_max: 1

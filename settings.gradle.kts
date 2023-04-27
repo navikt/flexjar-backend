@@ -1,1 +1,1 @@
-rootProject.name = "flex-frontend-feilmeldinger"
+rootProject.name = "flexjar-backend"

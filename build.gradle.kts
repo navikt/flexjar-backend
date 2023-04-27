@@ -10,7 +10,7 @@ plugins {
 
 group = "no.nav.helse.flex"
 version = "1.0.0"
-description = "flex-frontend-feilmeldinger"
+description = "flexjar-backend"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 val githubUser: String by project
