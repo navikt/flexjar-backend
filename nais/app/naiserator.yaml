@@ -7,8 +7,6 @@ metadata:
     team: flex
 spec:
   image: {{image}}
-  ingresses:
-    - {{ingress}}
   replicas:
     min: {{replicas_min}}
     max: {{replicas_max}}
