@@ -7,18 +7,12 @@ import org.springframework.stereotype.Repository
 import java.time.OffsetDateTime
 
 @Repository
-interface FeilmeldingRepository : CrudRepository<FeilmeldingDbRecord, String>
+interface FeedbackRepository : CrudRepository<FeedbackDbRecord, String>
 
-@Table("feilmelding")
-data class FeilmeldingDbRecord(
+@Table("feedback")
+data class FeedbackDbRecord(
     @Id
     val id: String? = null,
     val opprettet: OffsetDateTime,
-    val requestId: String,
-    val app: String,
-    val payload: String,
-    val method: String,
-    val responseCode: Int,
-    val contentLength: Int,
-    val payloadLength: Int
+    val feedbackJson: String
 )
