@@ -1,6 +1,6 @@
 # flexjar-backend
 
-Applikasjon for lagring av brukerfeedback. 
+Applikasjon for lagring av brukerfeedback. bygg
 
 ## Henvendelser
 
