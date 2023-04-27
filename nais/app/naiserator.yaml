@@ -43,6 +43,11 @@ spec:
         maintenance:
           day: 2
           hour: 2
+  accessPolicy:
+    inbound:
+      rules:
+        - application: sykepengesoknad
+        - application: spinnsyn-frontend
   env:
   {{#each env}}
      - name: {{@key}}
