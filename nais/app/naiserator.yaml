@@ -28,6 +28,14 @@ spec:
     requests:
       cpu: {{cpu}}
       memory: {{memory}}
+  azure:
+    application:
+      tenant: nav.no
+      enabled: true
+      allowAllUsers: false
+      claims:
+        groups:
+          - id: "5206a646-a99e-4cd5-90e4-758cf7948cc8" #flex
   gcp:
     sqlInstances:
       - type: POSTGRES_14
