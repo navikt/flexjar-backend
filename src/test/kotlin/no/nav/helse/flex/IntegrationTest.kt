@@ -1,12 +1,14 @@
 package no.nav.helse.flex
 
 import no.nav.helse.flex.repository.FeedbackRepository
+import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeLessOrEqualTo
 import org.amshove.kluent.shouldHaveSize
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.OffsetDateTime
@@ -40,5 +42,15 @@ class IntegrationTest : FellesTestOppsett() {
         lagredeFeilmeldigner shouldHaveSize 1
         val lagretFeilmelding = lagredeFeilmeldigner.first()
         lagretFeilmelding.opprettet shouldBeLessOrEqualTo OffsetDateTime.now()
+    }
+
+    @Test
+    fun `Henter data som flexmedlem`() {
+        val contentAsString = mockMvc.perform(
+            get("/api/v1/intern/feedback")
+                .header("Authorization", "Bearer ${skapAzureJwt()}")
+        ).andExpect(status().isOk).andReturn().response.contentAsString
+
+        contentAsString shouldBeEqualTo "[]"
     }
 }

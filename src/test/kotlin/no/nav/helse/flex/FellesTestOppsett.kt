@@ -65,3 +65,42 @@ abstract class FellesTestOppsett {
         ).serialize()
     }
 }
+
+fun MockOAuth2Server.token(
+    subject: String,
+    issuerId: String,
+    clientId: String = UUID.randomUUID().toString(),
+    audience: String,
+    claims: Map<String, Any> = mapOf("acr" to "Level4")
+): String {
+    return this.issueToken(
+        issuerId,
+        clientId,
+        DefaultOAuth2TokenCallback(
+            issuerId = issuerId,
+            subject = subject,
+            audience = listOf(audience),
+            claims = claims,
+            expiry = 3600
+        )
+    ).serialize()
+}
+
+fun FellesTestOppsett.buildAzureClaimSet(
+    subject: String,
+    issuer: String = "azureator",
+    audience: String = "flexjar-backend-client-id"
+): String {
+    val claims = HashMap<String, String>()
+
+    return server.token(
+        subject = "Vi sjekker azp",
+        issuerId = issuer,
+        clientId = subject,
+        audience = audience,
+        claims = claims
+    )
+}
+
+fun FellesTestOppsett.skapAzureJwt(subject: String = "flexjar-frontend-client-id") =
+    buildAzureClaimSet(subject = subject)
