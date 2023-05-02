@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import java.time.OffsetDateTime
-import java.time.temporal.ChronoUnit
 
 @RestController
 @RequestMapping("/api/v1")
@@ -35,7 +34,7 @@ class FeedbackApi(
     private fun String.lagre() {
         feedbackRepository.save(
             FeedbackDbRecord(
-                opprettet = OffsetDateTime.now().truncatedTo(ChronoUnit.HOURS),
+                opprettet = OffsetDateTime.now(),
                 feedbackJson = this
             )
         )
