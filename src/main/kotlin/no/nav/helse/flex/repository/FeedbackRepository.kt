@@ -1,4 +1,4 @@
-package no.nav.helse.flex
+package no.nav.helse.flex.repository
 
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table

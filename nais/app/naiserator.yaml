@@ -28,6 +28,8 @@ spec:
     requests:
       cpu: {{cpu}}
       memory: {{memory}}
+  tokenx:
+    enabled: true
   azure:
     application:
       tenant: nav.no
@@ -55,6 +57,7 @@ spec:
     inbound:
       rules:
         - application: sykepengesoknad
+        - application: flexjar-frontend
         - application: spinnsyn-frontend
   env:
   {{#each env}}

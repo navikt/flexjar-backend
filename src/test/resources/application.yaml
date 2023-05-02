@@ -23,3 +23,14 @@ management:
     livenessstate.enabled: true
     readinessState.enabled: true
 
+no.nav.security.jwt:
+  issuer:
+    azureator:
+      discoveryurl: http://localhost:${mock-oauth2-server.port}/azureator/.well-known/openid-configuration
+      accepted_audience: flexjar-backend-client-id
+    tokenx:
+      discoveryurl: http://localhost:${mock-oauth2-server.port}/tokenx/.well-known/openid-configuration
+      accepted_audience: flexjar-backend-client-id
+
+
+AZURE_APP_PRE_AUTHORIZED_APPS: "[{\"name\":\"dev-gcp:flex:flexjar-frontend\",\"clientId\":\"flexjar-frontend-client-id\"}]"

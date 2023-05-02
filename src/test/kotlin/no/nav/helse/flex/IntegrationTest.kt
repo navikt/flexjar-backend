@@ -1,5 +1,6 @@
 package no.nav.helse.flex
 
+import no.nav.helse.flex.repository.FeedbackRepository
 import org.amshove.kluent.shouldBeLessOrEqualTo
 import org.amshove.kluent.shouldHaveSize
 import org.junit.jupiter.api.AfterEach
@@ -30,6 +31,7 @@ class IntegrationTest : FellesTestOppsett() {
 
         mockMvc.perform(
             post("/api/v1/feedback")
+                .header("Authorization", "Bearer ${tokenxToken()}")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(serialisertTilString)
         ).andExpect(status().isAccepted)
