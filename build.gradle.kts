@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.springframework.boot") version "3.0.5"
+    id("org.springframework.boot") version "3.0.6"
     id("io.spring.dependency-management") version "1.1.0"
     id("org.jlleitschuh.gradle.ktlint") version "11.3.1"
     kotlin("jvm") version "1.8.20"
@@ -25,8 +25,8 @@ repositories {
 
 val testContainersVersion = "1.18.0"
 val logstashLogbackEncoderVersion = "7.3"
-val kluentVersion = "1.72"
-val tokenSupportVersion = "3.0.10"
+val kluentVersion = "1.73"
+val tokenSupportVersion = "3.0.11"
 
 dependencies {
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
