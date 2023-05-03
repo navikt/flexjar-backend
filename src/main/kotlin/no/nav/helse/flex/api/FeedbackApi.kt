@@ -1,5 +1,7 @@
 package no.nav.helse.flex.api
 
+import com.fasterxml.jackson.module.kotlin.readValue
+import no.nav.helse.flex.objectMapper
 import no.nav.helse.flex.repository.FeedbackDbRecord
 import no.nav.helse.flex.repository.FeedbackRepository
 import no.nav.security.token.support.core.api.ProtectedWithClaims
@@ -32,6 +34,12 @@ class FeedbackApi(
     }
 
     private fun String.lagre() {
+        try {
+            tilFeedbackInputDto()
+        } catch (e: Exception) {
+            throw IllegalArgumentException("Kunne ikke deserialisere feedback", e)
+        }
+
         feedbackRepository.save(
             FeedbackDbRecord(
                 opprettet = OffsetDateTime.now(),
@@ -40,3 +48,10 @@ class FeedbackApi(
         )
     }
 }
+
+data class FeedbackInputDto(
+    val feedback: String,
+    val app: String,
+    val feedbackId: String
+)
+fun String.tilFeedbackInputDto(): FeedbackInputDto = objectMapper.readValue(this)

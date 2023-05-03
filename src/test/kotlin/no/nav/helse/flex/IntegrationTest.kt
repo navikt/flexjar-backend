@@ -27,7 +27,9 @@ class IntegrationTest : FellesTestOppsett() {
     @Test
     fun `202 ACCEPTED blir returnert ved gyldig feedback`() {
         val feilmeldingDto = mapOf(
-            "hei" to "hade",
+            "feedback" to "hade",
+            "app" to "spinnsyn-frontend",
+            "feedbackId" to "spinnsyn refusjon",
             "indre" to mapOf(
                 "hei" to 5
             )
@@ -52,7 +54,7 @@ class IntegrationTest : FellesTestOppsett() {
                 .header("Authorization", "Bearer ${skapAzureJwt()}")
         ).andExpect(status().isOk).andReturn().response.contentAsString
 
-        response shouldStartWith "[{\"feedback\":{\"hei\":\"hade\",\"indre\":{\"hei\":5}},\"opprettet\":"
+        response shouldStartWith "[{\"feedback\":{\"feedback\":\"hade\",\"app\":\"spinnsyn-frontend\",\"feedbackId\":\"spinnsyn refusjon\",\"indre\":{\"hei\":5}}"
     }
 
     @Test
@@ -63,5 +65,26 @@ class IntegrationTest : FellesTestOppsett() {
         ).andExpect(status().isOk).andReturn().response.contentAsString
 
         contentAsString shouldBeEqualTo "[]"
+    }
+
+    @Test
+    fun `400 ACCEPTED blir returnert ved ugyldig feedback`() {
+        val feilmeldingDto = mapOf(
+            "blah" to "hade",
+            "app" to "spinnsyn-frontend",
+            "feedbackId" to "spinnsyn refusjon",
+            "indre" to mapOf(
+                "hei" to 5
+            )
+        )
+
+        val serialisertTilString = feilmeldingDto.serialisertTilString()
+
+        mockMvc.perform(
+            post("/api/v1/feedback")
+                .header("Authorization", "Bearer ${tokenxToken()}")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(serialisertTilString)
+        ).andExpect(status().isBadRequest)
     }
 }
