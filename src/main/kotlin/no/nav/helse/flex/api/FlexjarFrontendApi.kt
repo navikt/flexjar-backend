@@ -30,11 +30,18 @@ class FlexjarFrontendApi(
             )
         )
         return feedbackRepository.findAll().toList()
-            .map { FeedbackDto(feedback = objectMapper.readValue(it.feedbackJson), opprettet = it.opprettet) }
+            .map {
+                FeedbackDto(
+                    feedback = objectMapper.readValue(it.feedbackJson),
+                    opprettet = it.opprettet,
+                    id = it.id!!
+                )
+            }
     }
 }
 
 data class FeedbackDto(
     val feedback: Map<String, Any>,
-    val opprettet: OffsetDateTime
+    val opprettet: OffsetDateTime,
+    val id: String
 )
