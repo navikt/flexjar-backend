@@ -5,10 +5,9 @@ import no.nav.helse.flex.clientidvalidation.ClientIdValidation
 import no.nav.helse.flex.objectMapper
 import no.nav.helse.flex.repository.FeedbackRepository
 import no.nav.security.token.support.core.api.ProtectedWithClaims
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.ResponseBody
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.*
 import java.time.OffsetDateTime
 
 @RestController
@@ -22,7 +21,7 @@ class FlexjarFrontendApi(
     @GetMapping("/feedback")
     @ResponseBody
     @ProtectedWithClaims(issuer = "azureator")
-    fun lagreFeedback(): List<FeedbackDto> {
+    fun hentFeedback(): List<FeedbackDto> {
         clientIdValidation.validateClientId(
             ClientIdValidation.NamespaceAndApp(
                 namespace = "flex",
@@ -37,6 +36,26 @@ class FlexjarFrontendApi(
                     id = it.id!!
                 )
             }
+    }
+
+    @DeleteMapping("/feedback/{id}")
+    @ResponseBody
+    @ProtectedWithClaims(issuer = "azureator")
+    fun slettFeedback(@PathVariable id: String): ResponseEntity<Void> {
+        clientIdValidation.validateClientId(
+            ClientIdValidation.NamespaceAndApp(
+                namespace = "flex",
+                app = "flexjar-frontend"
+            )
+        )
+
+        val feedback = feedbackRepository.findById(id)
+        return if (feedback.isPresent) {
+            feedbackRepository.deleteById(id)
+            ResponseEntity<Void>(HttpStatus.NO_CONTENT)
+        } else {
+            ResponseEntity<Void>(HttpStatus.NOT_FOUND)
+        }
     }
 }
 

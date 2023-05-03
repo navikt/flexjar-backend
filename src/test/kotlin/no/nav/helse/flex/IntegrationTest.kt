@@ -1,16 +1,16 @@
 package no.nav.helse.flex
 
+import com.fasterxml.jackson.module.kotlin.readValue
+import no.nav.helse.flex.api.FeedbackDto
 import no.nav.helse.flex.repository.FeedbackRepository
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeLessOrEqualTo
 import org.amshove.kluent.shouldHaveSize
-import org.amshove.kluent.shouldStartWith
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.OffsetDateTime
 
@@ -26,7 +26,7 @@ class IntegrationTest : FellesTestOppsett() {
 
     @Test
     fun `202 ACCEPTED blir returnert ved gyldig feedback`() {
-        val feilmeldingDto = mapOf(
+        val feedbackInn = mapOf(
             "feedback" to "hade",
             "app" to "spinnsyn-frontend",
             "feedbackId" to "spinnsyn refusjon",
@@ -35,7 +35,7 @@ class IntegrationTest : FellesTestOppsett() {
             )
         )
 
-        val serialisertTilString = feilmeldingDto.serialisertTilString()
+        val serialisertTilString = feedbackInn.serialisertTilString()
 
         mockMvc.perform(
             post("/api/v1/feedback")
@@ -54,7 +54,27 @@ class IntegrationTest : FellesTestOppsett() {
                 .header("Authorization", "Bearer ${skapAzureJwt()}")
         ).andExpect(status().isOk).andReturn().response.contentAsString
 
-        response shouldStartWith "[{\"feedback\":{\"feedback\":\"hade\",\"app\":\"spinnsyn-frontend\",\"feedbackId\":\"spinnsyn refusjon\",\"indre\":{\"hei\":5}}"
+        val deserialsert: List<FeedbackDto> = objectMapper.readValue(response)
+        deserialsert shouldHaveSize 1
+        deserialsert.first().feedback shouldBeEqualTo feedbackInn
+
+        mockMvc.perform(
+            delete("/api/v1/intern/feedback/${deserialsert.first().id}")
+                .header("Authorization", "Bearer ${skapAzureJwt()}")
+        ).andExpect(status().isNoContent)
+
+        mockMvc.perform(
+            delete("/api/v1/intern/feedback/${deserialsert.first().id}")
+                .header("Authorization", "Bearer ${skapAzureJwt()}")
+        ).andExpect(status().isNotFound)
+
+        val responseNy = mockMvc.perform(
+            get("/api/v1/intern/feedback")
+                .header("Authorization", "Bearer ${skapAzureJwt()}")
+        ).andExpect(status().isOk).andReturn().response.contentAsString
+
+        val deserialserNy: List<FeedbackDto> = objectMapper.readValue(responseNy)
+        deserialserNy shouldHaveSize 0
     }
 
     @Test
