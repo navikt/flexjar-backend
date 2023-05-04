@@ -1,6 +1,6 @@
 # flexjar-backend
 
-Applikasjon for lagring av brukerfeedback. 
+Applikasjon for lagring av brukerfeedback. Dataene lagres i en postgres database.
 
 Feedbacken kommer fra ulike brukerrettede applikasjoner som er eid av team flex. F.eks. spinnsyn, sykepengesøknad og ditt sykefravær.
 
