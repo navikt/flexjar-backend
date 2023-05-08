@@ -50,7 +50,8 @@ class FeedbackApi(
 }
 
 data class FeedbackInputDto(
-    val feedback: String,
+    val feedback: String?,
+    val svar: String?,
     val app: String,
     val feedbackId: String
 )

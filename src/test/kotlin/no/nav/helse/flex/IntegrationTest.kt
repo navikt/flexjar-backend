@@ -91,7 +91,7 @@ class IntegrationTest : FellesTestOppsett() {
     fun `400 ACCEPTED blir returnert ved ugyldig feedback`() {
         val feilmeldingDto = mapOf(
             "blah" to "hade",
-            "app" to "spinnsyn-frontend",
+            "apklp" to "spinnsyn-frontend",
             "feedbackId" to "spinnsyn refusjon",
             "indre" to mapOf(
                 "hei" to 5
