@@ -50,9 +50,14 @@ spec:
         databases:
           - name: flexjar-backend-db
             envVarPrefix: DATABASE
+            users:
+              - name: bigquery-datastream
         maintenance:
           day: 2
           hour: 2
+        flags:
+          - name: cloudsql.logical_decoding
+            value: "on"
   accessPolicy:
     inbound:
       rules:
