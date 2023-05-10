@@ -1,0 +1,1 @@
+CREATE PUBLICATION flexjar_backend_publication for ALL TABLES;
