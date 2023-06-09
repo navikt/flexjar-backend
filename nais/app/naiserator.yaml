@@ -64,6 +64,7 @@ spec:
         - application: sykepengesoknad
         - application: flexjar-frontend
         - application: spinnsyn-frontend
+        - application: ditt-sykefravaer
   env:
   {{#each env}}
      - name: {{@key}}
