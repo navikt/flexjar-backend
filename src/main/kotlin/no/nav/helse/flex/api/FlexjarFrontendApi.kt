@@ -4,6 +4,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.helse.flex.clientidvalidation.ClientIdValidation
 import no.nav.helse.flex.objectMapper
 import no.nav.helse.flex.repository.FeedbackRepository
+import no.nav.helse.flex.serialisertTilString
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -49,12 +50,22 @@ class FlexjarFrontendApi(
             )
         )
 
-        val feedback = feedbackRepository.findById(id)
-        return if (feedback.isPresent) {
-            feedbackRepository.deleteById(id)
-            ResponseEntity<Void>(HttpStatus.NO_CONTENT)
-        } else {
-            ResponseEntity<Void>(HttpStatus.NOT_FOUND)
+        try {
+            val feedback = feedbackRepository.findById(id).get()
+            val json = feedback.feedbackJson
+            val jsonMap = objectMapper.readValue<MutableMap<String, Any>>(json)
+
+            jsonMap.replace("feedback", "") ?: return ResponseEntity<Void>(HttpStatus.BAD_REQUEST)
+            val feedbackUtenFeedback = feedback.copy(
+                feedbackJson = jsonMap.serialisertTilString()
+            )
+            feedbackRepository.save(feedbackUtenFeedback)
+
+            return ResponseEntity<Void>(HttpStatus.NO_CONTENT)
+        } catch (e: NoSuchElementException) {
+            return ResponseEntity<Void>(HttpStatus.NOT_FOUND)
+        } catch (e: Exception) {
+            return ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 }

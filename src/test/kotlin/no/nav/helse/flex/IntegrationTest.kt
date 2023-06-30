@@ -63,18 +63,14 @@ class IntegrationTest : FellesTestOppsett() {
                 .header("Authorization", "Bearer ${skapAzureJwt()}")
         ).andExpect(status().isNoContent)
 
-        mockMvc.perform(
-            delete("/api/v1/intern/feedback/${deserialsert.first().id}")
-                .header("Authorization", "Bearer ${skapAzureJwt()}")
-        ).andExpect(status().isNotFound)
-
         val responseNy = mockMvc.perform(
             get("/api/v1/intern/feedback")
                 .header("Authorization", "Bearer ${skapAzureJwt()}")
         ).andExpect(status().isOk).andReturn().response.contentAsString
 
         val deserialserNy: List<FeedbackDto> = objectMapper.readValue(responseNy)
-        deserialserNy shouldHaveSize 0
+        deserialserNy shouldHaveSize 1
+        deserialserNy.first().feedback shouldBeEqualTo feedbackInn.toMutableMap().also { it["feedback"] = "" }
     }
 
     @Test
@@ -88,7 +84,7 @@ class IntegrationTest : FellesTestOppsett() {
     }
 
     @Test
-    fun `400 ACCEPTED blir returnert ved ugyldig feedback`() {
+    fun `400 blir returnert ved ugyldig feedback`() {
         val feilmeldingDto = mapOf(
             "blah" to "hade",
             "apklp" to "spinnsyn-frontend",
@@ -106,5 +102,13 @@ class IntegrationTest : FellesTestOppsett() {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(serialisertTilString)
         ).andExpect(status().isBadRequest)
+    }
+
+    @Test
+    fun `404 når feedback ikke finnes`() {
+        mockMvc.perform(
+            delete("/api/v1/intern/feedback/12345")
+                .header("Authorization", "Bearer ${skapAzureJwt()}")
+        ).andExpect(status().isNotFound)
     }
 }
