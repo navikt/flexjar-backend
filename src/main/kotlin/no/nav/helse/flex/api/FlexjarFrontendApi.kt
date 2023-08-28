@@ -34,7 +34,10 @@ class FlexjarFrontendApi(
                 FeedbackDto(
                     feedback = objectMapper.readValue(it.feedbackJson),
                     opprettet = it.opprettet,
-                    id = it.id!!
+                    id = it.id!!,
+                    team = it.team,
+                    app = it.app
+
                 )
             }
     }
@@ -73,5 +76,7 @@ class FlexjarFrontendApi(
 data class FeedbackDto(
     val feedback: Map<String, Any>,
     val opprettet: OffsetDateTime,
-    val id: String
+    val id: String,
+    val team: String,
+    val app: String?
 )

@@ -3,6 +3,3 @@ ALTER TABLE feedback
 ALTER TABLE feedback
     ADD app VARCHAR(255) NULL;
 
-UPDATE feedback
-SET app = feedbackJson ->> 'app'
-WHERE feedbackJson ->> 'app' IS NOT NULL;

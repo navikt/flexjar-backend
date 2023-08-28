@@ -48,7 +48,6 @@ class FeedbackApi(
     }
 
     private fun String.lagre(app: String, team: String) {
-
         try {
             tilFeedbackInputDto()
         } catch (e: Exception) {
@@ -70,7 +69,7 @@ data class FeedbackInputDto(
     val feedback: String?,
     val svar: String?,
     val app: String,
-    val feedbackId: String,
+    val feedbackId: String
 )
 
 fun String.tilFeedbackInputDto(): FeedbackInputDto = objectMapper.readValue(this)

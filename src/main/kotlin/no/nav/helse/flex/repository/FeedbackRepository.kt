@@ -16,5 +16,5 @@ data class FeedbackDbRecord(
     val opprettet: OffsetDateTime,
     val feedbackJson: String,
     val team: String,
-    val app: String,
+    val app: String? = null
 )

@@ -47,7 +47,7 @@ abstract class FellesTestOppsett {
         fnr: String = "12345678910",
         audience: String = "flexjar-backend-client-id",
         issuerId: String = "tokenx",
-        clientId: String = "spinnsyn-frontend",
+        clientId: String = "dev-gcp:flex:spinnsyn-frontend",
         claims: Map<String, Any> = mapOf(
             "acr" to "Level4",
             "idp" to "idporten",
