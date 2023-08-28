@@ -39,6 +39,7 @@ spec:
         groups:
           - id: "5206a646-a99e-4cd5-90e4-758cf7948cc8" #flex
           - id: "020e6140-6395-430b-9021-65de50e42a0f" #flexjar
+          - id: "3a541678-8965-45c4-844b-486a8b9b94a3" #teamsykmelding
   gcp:
     sqlInstances:
       - type: POSTGRES_14
@@ -66,6 +67,10 @@ spec:
         - application: flexjar-frontend
         - application: spinnsyn-frontend
         - application: ditt-sykefravaer
+        - application: dinesykmeldte
+          namespace: teamsykmelding
+        - application: sykmeldinger
+          namespace: teamsykmelding
   env:
   {{#each env}}
      - name: {{@key}}
