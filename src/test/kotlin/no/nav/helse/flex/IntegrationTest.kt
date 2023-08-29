@@ -2,6 +2,7 @@ package no.nav.helse.flex
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.helse.flex.api.FeedbackDto
+import no.nav.helse.flex.api.PaginationResult
 import no.nav.helse.flex.repository.FeedbackDbRecord
 import no.nav.helse.flex.repository.FeedbackRepository
 import org.amshove.kluent.shouldBeEqualTo
@@ -122,6 +123,51 @@ class IntegrationTest : FellesTestOppsett() {
 
         result shouldHaveSize 1
         result[0].team shouldBeEqualTo "team_annet"
+    }
+
+    @Test
+    fun `Henter data paginert`() {
+        val feedbackInn = mapOf(
+            "feedback" to "hade",
+            "app" to "spinnsyn-frontend",
+            "feedbackId" to "spinnsyn refusjon",
+            "indre" to mapOf(
+                "hei" to 5
+            )
+        ).serialisertTilString()
+
+        feedbackRepository.saveAll(
+            (1..100).map {
+                FeedbackDbRecord(
+                    opprettet = OffsetDateTime.now(),
+                    feedbackJson = feedbackInn,
+                    team = "team_annet",
+                    app = "$it"
+                )
+            }
+        )
+
+        val simplePagination = mockMvc.perform(
+            get("/api/v1/intern/feedback-paginated?team=team_annet&page=0&size=10")
+                .header("Authorization", "Bearer ${skapAzureJwt()}")
+        ).andExpect(status().isOk).andReturn().response.contentAsString
+        val differentPagination = mockMvc.perform(
+            get("/api/v1/intern/feedback-paginated?team=team_annet&page=3&size=7")
+                .header("Authorization", "Bearer ${skapAzureJwt()}")
+        ).andExpect(status().isOk).andReturn().response.contentAsString
+
+        val simplePage = objectMapper.readValue<PaginationResult<FeedbackDto>>(simplePagination)
+        val differentPage = objectMapper.readValue<PaginationResult<FeedbackDto>>(differentPagination)
+
+        simplePage.content shouldHaveSize 10
+        simplePage.totalPages shouldBeEqualTo 10
+        simplePage.totalElements shouldBeEqualTo 100
+        simplePage.content.map { it.app }.toSet() shouldBeEqualTo (1..10).map { "$it" }.toSet()
+
+        differentPage.content shouldHaveSize 7
+        differentPage.totalPages shouldBeEqualTo 15
+        differentPage.totalElements shouldBeEqualTo 100
+        differentPage.content.map { it.app }.toSet() shouldBeEqualTo (22..28).map { "$it" }.toSet()
     }
 
     @Test
