@@ -7,7 +7,9 @@ import org.springframework.stereotype.Repository
 import java.time.OffsetDateTime
 
 @Repository
-interface FeedbackRepository : CrudRepository<FeedbackDbRecord, String>
+interface FeedbackRepository : CrudRepository<FeedbackDbRecord, String> {
+    fun getAllByTeam(team: String): List<FeedbackDbRecord>
+}
 
 @Table("feedback")
 data class FeedbackDbRecord(

@@ -2,6 +2,7 @@ package no.nav.helse.flex
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.helse.flex.api.FeedbackDto
+import no.nav.helse.flex.repository.FeedbackDbRecord
 import no.nav.helse.flex.repository.FeedbackRepository
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeLessOrEqualTo
@@ -81,6 +82,46 @@ class IntegrationTest : FellesTestOppsett() {
         ).andExpect(status().isOk).andReturn().response.contentAsString
 
         contentAsString shouldBeEqualTo "[]"
+    }
+
+    @Test
+    fun `Henter data som annet team`() {
+        val feedbackInn = mapOf(
+            "feedback" to "hade",
+            "app" to "spinnsyn-frontend",
+            "feedbackId" to "spinnsyn refusjon",
+            "indre" to mapOf(
+                "hei" to 5
+            )
+        ).serialisertTilString()
+
+        feedbackRepository.save(
+            FeedbackDbRecord(
+                opprettet = OffsetDateTime.now(),
+                feedbackJson = feedbackInn,
+                team = "team_annet",
+                app = "test app"
+            )
+        )
+
+        feedbackRepository.save(
+            FeedbackDbRecord(
+                opprettet = OffsetDateTime.now(),
+                feedbackJson = feedbackInn,
+                team = "flex",
+                app = "other app"
+            )
+        )
+
+        val contentAsString = mockMvc.perform(
+            get("/api/v1/intern/feedback?team=team_annet")
+                .header("Authorization", "Bearer ${skapAzureJwt()}")
+        ).andExpect(status().isOk).andReturn().response.contentAsString
+
+        val result = objectMapper.readValue<List<FeedbackDto>>(contentAsString)
+
+        result shouldHaveSize 1
+        result[0].team shouldBeEqualTo "team_annet"
     }
 
     @Test
