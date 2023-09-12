@@ -49,7 +49,7 @@ abstract class FellesTestOppsett {
         issuerId: String = "tokenx",
         clientId: String = "dev-gcp:flex:spinnsyn-frontend",
         claims: Map<String, Any> = mapOf(
-            "acr" to "Level4",
+            "acr" to "idporten-loa-high",
             "idp" to "idporten",
             "client_id" to clientId,
             "pid" to fnr
@@ -74,7 +74,7 @@ fun MockOAuth2Server.token(
     issuerId: String,
     clientId: String = UUID.randomUUID().toString(),
     audience: String,
-    claims: Map<String, Any> = mapOf("acr" to "Level4")
+    claims: Map<String, Any> = mapOf("acr" to "idporten-loa-high")
 ): String {
     return this.issueToken(
         issuerId,
