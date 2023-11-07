@@ -2,6 +2,7 @@ package no.nav.helse.flex
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.helse.flex.api.FeedbackDto
+import no.nav.helse.flex.api.FeedbackPage
 import no.nav.helse.flex.repository.FeedbackDbRecord
 import no.nav.helse.flex.repository.FeedbackRepository
 import org.amshove.kluent.shouldBeEqualTo
@@ -72,6 +73,16 @@ class IntegrationTest : FellesTestOppsett() {
         val deserialserNy: List<FeedbackDto> = objectMapper.readValue(responseNy)
         deserialserNy shouldHaveSize 1
         deserialserNy.first().feedback shouldBeEqualTo feedbackInn.toMutableMap().also { it["feedback"] = "" }
+
+        val responsePaginert = mockMvc.perform(
+            get("/api/v1/intern/feedback-pagable")
+                .header("Authorization", "Bearer ${skapAzureJwt()}")
+        ).andExpect(status().isOk).andReturn().response.contentAsString
+
+        val deserialsertPaginert: FeedbackPage = objectMapper.readValue(responsePaginert)
+        deserialsertPaginert.content shouldHaveSize 1
+        deserialsertPaginert.totalItems shouldBeEqualTo 1
+        deserialsertPaginert.totalPages shouldBeEqualTo 1
     }
 
     @Test

@@ -4,8 +4,11 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.helse.flex.clientidvalidation.ClientIdValidation
 import no.nav.helse.flex.objectMapper
 import no.nav.helse.flex.repository.FeedbackRepository
+import no.nav.helse.flex.repository.PagingFeedbackRepository
 import no.nav.helse.flex.serialisertTilString
 import no.nav.security.token.support.core.api.ProtectedWithClaims
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -15,6 +18,7 @@ import java.time.OffsetDateTime
 @RequestMapping("/api/v1/intern")
 class FlexjarFrontendApi(
     private val feedbackRepository: FeedbackRepository,
+    private val pagingFeedbackRepository: PagingFeedbackRepository,
     private val clientIdValidation: ClientIdValidation
 
 ) {
@@ -41,6 +45,40 @@ class FlexjarFrontendApi(
 
                 )
             }
+    }
+
+    @GetMapping("/feedback-pagable")
+    @ResponseBody
+    @ProtectedWithClaims(issuer = "azureator")
+    fun hentFeedbackPageable(
+        @RequestParam(defaultValue = "flex") team: String,
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "10") size: Int
+    ): FeedbackPage {
+        clientIdValidation.validateClientId(
+            ClientIdValidation.NamespaceAndApp(
+                namespace = "flex",
+                app = "flexjar-frontend"
+            )
+        )
+        val pageable = PageRequest.of(page, size, Sort.Direction.DESC, "opprettet")
+
+        val dbRecords = pagingFeedbackRepository.getAllByTeam(team, pageable)
+        return FeedbackPage(
+            content = dbRecords.content.map {
+                FeedbackDto(
+                    feedback = objectMapper.readValue(it.feedbackJson),
+                    opprettet = it.opprettet,
+                    id = it.id!!,
+                    team = it.team,
+                    app = it.app
+
+                )
+            },
+            currentPage = dbRecords.number,
+            totalItems = dbRecords.totalElements,
+            totalPages = dbRecords.totalPages
+        )
     }
 
     @DeleteMapping("/feedback/{id}")
@@ -80,4 +118,11 @@ data class FeedbackDto(
     val id: String,
     val team: String,
     val app: String?
+)
+
+data class FeedbackPage(
+    val content: List<FeedbackDto>,
+    val currentPage: Int,
+    val totalItems: Long,
+    val totalPages: Int
 )
