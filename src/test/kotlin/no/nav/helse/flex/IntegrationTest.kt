@@ -91,8 +91,8 @@ class IntegrationTest : FellesTestOppsett() {
 
         val deserialsertPaginert2: FeedbackPage = objectMapper.readValue(responsePaginert2)
         deserialsertPaginert2.content shouldHaveSize 0
-        deserialsertPaginert2.totalElements shouldBeEqualTo 1
-        deserialsertPaginert2.totalPages shouldBeEqualTo 1
+        deserialsertPaginert2.totalElements shouldBeEqualTo 0
+        deserialsertPaginert2.totalPages shouldBeEqualTo 0
 
         mockMvc.perform(
             get("/api/v1/intern/feedback-pagable?medTekst=true&fritekst=sdfsdf")
