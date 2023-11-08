@@ -15,10 +15,11 @@ class PagingFeedbackRepository(
 
 ) {
 
-    fun findPaginated(pageable: Pageable, team: String): Page<FeedbackDbRecord> {
+    fun findPaginated(pageable: Pageable, team: String, medTekst: Boolean): Page<FeedbackDbRecord> {
         // Replace with your actual criteria and parameters
         // Replace with your actual criteria and parameters
         val whereClause = "WHERE team = ?"
+
         val criteria = arrayOf(team)
 
         val rowCountSql = "SELECT count(*) AS row_count FROM feedback $whereClause"
@@ -31,7 +32,12 @@ class PagingFeedbackRepository(
         val query = (
             "SELECT * FROM feedback " +
                 whereClause +
-                " ORDER BY opprettet " +
+                if (medTekst) {
+                    " AND feedback_json::json->>'feedback' <> ''"
+                } else {
+                    ""
+                } +
+                " ORDER BY opprettet DESC" +
                 " LIMIT " + pageable.pageSize
             ) +
             " OFFSET " + pageable.offset

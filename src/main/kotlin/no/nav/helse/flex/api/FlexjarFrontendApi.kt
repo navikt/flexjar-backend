@@ -53,7 +53,8 @@ class FlexjarFrontendApi(
     fun hentFeedbackPageable(
         @RequestParam(defaultValue = "flex") team: String,
         @RequestParam(defaultValue = "0") page: Int,
-        @RequestParam(defaultValue = "10") size: Int
+        @RequestParam(defaultValue = "10") size: Int,
+        @RequestParam(defaultValue = "false") medTekst: Boolean
     ): FeedbackPage {
         clientIdValidation.validateClientId(
             ClientIdValidation.NamespaceAndApp(
@@ -63,7 +64,7 @@ class FlexjarFrontendApi(
         )
         val pageable = PageRequest.of(page, size, Sort.Direction.DESC, "opprettet")
 
-        val dbRecords = pagingFeedbackRepository.findPaginated(pageable, team)
+        val dbRecords = pagingFeedbackRepository.findPaginated(pageable, team, medTekst)
         return FeedbackPage(
             content = dbRecords.content.map {
                 FeedbackDto(

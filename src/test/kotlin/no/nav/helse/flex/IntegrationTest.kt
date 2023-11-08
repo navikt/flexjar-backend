@@ -83,6 +83,16 @@ class IntegrationTest : FellesTestOppsett() {
         deserialsertPaginert.content shouldHaveSize 1
         deserialsertPaginert.totalItems shouldBeEqualTo 1
         deserialsertPaginert.totalPages shouldBeEqualTo 1
+
+        val responsePaginert2 = mockMvc.perform(
+            get("/api/v1/intern/feedback-pagable?medTekst=true")
+                .header("Authorization", "Bearer ${skapAzureJwt()}")
+        ).andExpect(status().isOk).andReturn().response.contentAsString
+
+        val deserialsertPaginert2: FeedbackPage = objectMapper.readValue(responsePaginert2)
+        deserialsertPaginert2.content shouldHaveSize 0
+        deserialsertPaginert2.totalItems shouldBeEqualTo 1
+        deserialsertPaginert2.totalPages shouldBeEqualTo 1
     }
 
     @Test
