@@ -51,7 +51,8 @@ class FlexjarFrontendApi(
         @RequestParam(defaultValue = "flex") team: String,
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "10") size: Int,
-        @RequestParam(defaultValue = "false") medTekst: Boolean
+        @RequestParam(defaultValue = "false") medTekst: Boolean,
+        @RequestParam fritekst: String?
     ): FeedbackPage {
         clientIdValidation.validateClientId(
             ClientIdValidation.NamespaceAndApp(
@@ -64,7 +65,8 @@ class FlexjarFrontendApi(
             page = page,
             size = size,
             team = team,
-            medTekst = medTekst
+            medTekst = medTekst,
+            fritekst = fritekst
         )
         return FeedbackPage(
             content = dbRecords.first.map {

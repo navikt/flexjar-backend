@@ -12,7 +12,7 @@ class PagingFeedbackRepository(
 
 ) {
 
-    fun findPaginated(page: Int, size: Int, team: String, medTekst: Boolean): Pair<List<FeedbackDbRecord>, Long> {
+    fun findPaginated(page: Int, size: Int, team: String, medTekst: Boolean, fritekst: String?): Pair<List<FeedbackDbRecord>, Long> {
         // Replace with your actual criteria and parameters
         // Replace with your actual criteria and parameters
         val whereClause = "WHERE team = ?"
@@ -35,8 +35,13 @@ class PagingFeedbackRepository(
                 } else {
                     ""
                 } +
-                " ORDER BY opprettet DESC" +
-                " LIMIT " + size
+                if (fritekst != null) {
+                    " AND feedback_json ILIKE '%$fritekst%'"
+                } else {
+                    "" +
+                        " ORDER BY opprettet DESC" +
+                        " LIMIT " + size
+                }
             ) +
             " OFFSET " + offset
 

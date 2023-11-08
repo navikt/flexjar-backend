@@ -93,6 +93,11 @@ class IntegrationTest : FellesTestOppsett() {
         deserialsertPaginert2.content shouldHaveSize 0
         deserialsertPaginert2.totalElements shouldBeEqualTo 1
         deserialsertPaginert2.totalPages shouldBeEqualTo 1
+
+        mockMvc.perform(
+            get("/api/v1/intern/feedback-pagable?medTekst=true&fritekst=sdfsdf")
+                .header("Authorization", "Bearer ${skapAzureJwt()}")
+        ).andExpect(status().isOk).andReturn().response.contentAsString
     }
 
     @Test
