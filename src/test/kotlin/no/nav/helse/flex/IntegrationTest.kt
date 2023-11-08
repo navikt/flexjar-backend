@@ -81,7 +81,7 @@ class IntegrationTest : FellesTestOppsett() {
 
         val deserialsertPaginert: FeedbackPage = objectMapper.readValue(responsePaginert)
         deserialsertPaginert.content shouldHaveSize 1
-        deserialsertPaginert.totalItems shouldBeEqualTo 1
+        deserialsertPaginert.totalElements shouldBeEqualTo 1
         deserialsertPaginert.totalPages shouldBeEqualTo 1
 
         val responsePaginert2 = mockMvc.perform(
@@ -91,7 +91,7 @@ class IntegrationTest : FellesTestOppsett() {
 
         val deserialsertPaginert2: FeedbackPage = objectMapper.readValue(responsePaginert2)
         deserialsertPaginert2.content shouldHaveSize 0
-        deserialsertPaginert2.totalItems shouldBeEqualTo 1
+        deserialsertPaginert2.totalElements shouldBeEqualTo 1
         deserialsertPaginert2.totalPages shouldBeEqualTo 1
     }
 

@@ -7,8 +7,6 @@ import no.nav.helse.flex.repository.FeedbackRepository
 import no.nav.helse.flex.repository.PagingFeedbackRepository
 import no.nav.helse.flex.serialisertTilString
 import no.nav.security.token.support.core.api.ProtectedWithClaims
-import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -42,7 +40,6 @@ class FlexjarFrontendApi(
                     id = it.id!!,
                     team = it.team,
                     app = it.app
-
                 )
             }
     }
@@ -62,11 +59,15 @@ class FlexjarFrontendApi(
                 app = "flexjar-frontend"
             )
         )
-        val pageable = PageRequest.of(page, size, Sort.Direction.DESC, "opprettet")
 
-        val dbRecords = pagingFeedbackRepository.findPaginated(pageable, team, medTekst)
+        val dbRecords = pagingFeedbackRepository.findPaginated(
+            page = page,
+            size = size,
+            team = team,
+            medTekst = medTekst
+        )
         return FeedbackPage(
-            content = dbRecords.content.map {
+            content = dbRecords.first.map {
                 FeedbackDto(
                     feedback = objectMapper.readValue(it.feedbackJson),
                     opprettet = it.opprettet,
@@ -76,9 +77,11 @@ class FlexjarFrontendApi(
 
                 )
             },
-            currentPage = dbRecords.number,
-            totalItems = dbRecords.totalElements,
-            totalPages = dbRecords.totalPages
+            totalPages = Math.ceil(dbRecords.second.toDouble() / size).toInt(),
+            totalElements = dbRecords.second.toInt(),
+            size = size,
+            number = page
+
         )
     }
 
@@ -123,7 +126,8 @@ data class FeedbackDto(
 
 data class FeedbackPage(
     val content: List<FeedbackDto>,
-    val currentPage: Int,
-    val totalItems: Long,
-    val totalPages: Int
+    val totalPages: Int,
+    val totalElements: Int,
+    val size: Int,
+    val number: Int
 )

@@ -1,8 +1,5 @@
 package no.nav.helse.flex.repository
 
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageImpl
-import org.springframework.data.domain.Pageable
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Service
@@ -15,12 +12,13 @@ class PagingFeedbackRepository(
 
 ) {
 
-    fun findPaginated(pageable: Pageable, team: String, medTekst: Boolean): Page<FeedbackDbRecord> {
+    fun findPaginated(page: Int, size: Int, team: String, medTekst: Boolean): Pair<List<FeedbackDbRecord>, Long> {
         // Replace with your actual criteria and parameters
         // Replace with your actual criteria and parameters
         val whereClause = "WHERE team = ?"
 
         val criteria = arrayOf(team)
+        val offset = page * size // If your page number starts at 0
 
         val rowCountSql = "SELECT count(*) AS row_count FROM feedback $whereClause"
         val total = jdbcTemplate.queryForObject(
@@ -38,9 +36,9 @@ class PagingFeedbackRepository(
                     ""
                 } +
                 " ORDER BY opprettet DESC" +
-                " LIMIT " + pageable.pageSize
+                " LIMIT " + size
             ) +
-            " OFFSET " + pageable.offset
+            " OFFSET " + offset
 
         val pageItems: List<FeedbackDbRecord> = jdbcTemplate.query(
             query,
@@ -48,7 +46,7 @@ class PagingFeedbackRepository(
             *criteria
         )
 
-        return PageImpl(pageItems, pageable, total.toLong())
+        return Pair(pageItems, total.toLong())
     }
 }
 
