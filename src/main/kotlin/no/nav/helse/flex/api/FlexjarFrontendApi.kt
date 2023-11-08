@@ -63,7 +63,7 @@ class FlexjarFrontendApi(
         )
         val pageable = PageRequest.of(page, size, Sort.Direction.DESC, "opprettet")
 
-        val dbRecords = pagingFeedbackRepository.getAllByTeam(team, pageable)
+        val dbRecords = pagingFeedbackRepository.findPaginated(pageable, team)
         return FeedbackPage(
             content = dbRecords.content.map {
                 FeedbackDto(
