@@ -133,6 +133,20 @@ class FlexjarFrontendApi(
             return ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
+
+    @GetMapping("/api/v1/intern/feedback/tags")
+    @ResponseBody
+    @ProtectedWithClaims(issuer = "azureator")
+    fun hentAlleTags(): Set<String> {
+        clientIdValidation.validateClientId(
+            ClientIdValidation.NamespaceAndApp(
+                namespace = "flex",
+                app = "flexjar-frontend"
+            )
+        )
+
+        return feedbackRepository.finnAlleDistinctTags().map { it?.split(",")?.toSet() ?: emptySet() }.flatten().toSet()
+    }
 }
 
 fun FeedbackDbRecord.toDto(): FeedbackDto {

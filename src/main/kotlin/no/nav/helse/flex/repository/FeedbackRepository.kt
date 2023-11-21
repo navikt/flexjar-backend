@@ -1,6 +1,7 @@
 package no.nav.helse.flex.repository
 
 import org.springframework.data.annotation.Id
+import org.springframework.data.jdbc.repository.query.Query
 import org.springframework.data.relational.core.mapping.Table
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
@@ -9,6 +10,9 @@ import java.time.OffsetDateTime
 @Repository
 interface FeedbackRepository : CrudRepository<FeedbackDbRecord, String> {
     fun getAllByTeam(team: String): List<FeedbackDbRecord>
+
+    @Query("SELECT DISTINCT f.tags FROM feedback f")
+    fun finnAlleDistinctTags(): List<String?>
 }
 
 @Table("feedback")

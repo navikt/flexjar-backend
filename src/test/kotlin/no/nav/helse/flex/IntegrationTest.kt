@@ -193,6 +193,12 @@ class IntegrationTest : FellesTestOppsett() {
 
         val serialisertTilString = feedbackInn.serialisertTilString()
 
+        // Tags først
+        mockMvc.perform(
+            get("/api/v1/intern/feedback/tags")
+                .header("Authorization", "Bearer ${skapAzureJwt()}")
+        ).andExpect(status().isOk).andReturn().response.contentAsString shouldBeEqualTo "[]"
+
         mockMvc.perform(
             post("/api/v1/feedback")
                 .header("Authorization", "Bearer ${tokenxToken()}")
@@ -227,5 +233,11 @@ class IntegrationTest : FellesTestOppsett() {
         deserialserNy shouldHaveSize 1
         val oppdatert = deserialserNy.first()
         oppdatert.tags.shouldBeEqualTo(setOf("yrkesskade"))
+
+        // Tags etterpå
+        mockMvc.perform(
+            get("/api/v1/intern/feedback/tags")
+                .header("Authorization", "Bearer ${skapAzureJwt()}")
+        ).andExpect(status().isOk).andReturn().response.contentAsString shouldBeEqualTo "[\"yrkesskade\"]"
     }
 }
