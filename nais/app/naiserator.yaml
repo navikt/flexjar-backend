@@ -74,6 +74,8 @@ spec:
           namespace: teamsykmelding
         - application: spinntektsmelding-frontend
           namespace: helsearbeidsgiver
+        - application: flexjar-proxy
+          namespace: tbd
   env:
   {{#each env}}
      - name: {{@key}}
