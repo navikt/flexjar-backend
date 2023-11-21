@@ -3,6 +3,7 @@ package no.nav.helse.flex.api
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.helse.flex.clientidvalidation.ClientIdValidation
 import no.nav.helse.flex.objectMapper
+import no.nav.helse.flex.repository.FeedbackDbRecord
 import no.nav.helse.flex.repository.FeedbackRepository
 import no.nav.helse.flex.repository.PagingFeedbackRepository
 import no.nav.helse.flex.serialisertTilString
@@ -11,9 +12,11 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.time.OffsetDateTime
+import java.util.*
+import kotlin.NoSuchElementException
+import kotlin.math.ceil
 
 @RestController
-@RequestMapping("/api/v1/intern")
 class FlexjarFrontendApi(
     private val feedbackRepository: FeedbackRepository,
     private val pagingFeedbackRepository: PagingFeedbackRepository,
@@ -21,7 +24,7 @@ class FlexjarFrontendApi(
 
 ) {
 
-    @GetMapping("/feedback")
+    @GetMapping("/api/v1/intern/feedback")
     @ResponseBody
     @ProtectedWithClaims(issuer = "azureator")
     fun hentFeedback(@RequestParam team: String?): List<FeedbackDto> {
@@ -32,19 +35,10 @@ class FlexjarFrontendApi(
             )
         )
 
-        return feedbackRepository.getAllByTeam(team ?: "flex").toList()
-            .map {
-                FeedbackDto(
-                    feedback = objectMapper.readValue(it.feedbackJson),
-                    opprettet = it.opprettet,
-                    id = it.id!!,
-                    team = it.team,
-                    app = it.app
-                )
-            }
+        return feedbackRepository.getAllByTeam(team ?: "flex").toList().map(FeedbackDbRecord::toDto)
     }
 
-    @GetMapping("/feedback-pagable")
+    @GetMapping("/api/v1/intern/feedback-pagable")
     @ResponseBody
     @ProtectedWithClaims(issuer = "azureator")
     fun hentFeedbackPageable(
@@ -68,18 +62,10 @@ class FlexjarFrontendApi(
             medTekst = medTekst,
             fritekst = fritekst
         )
-        return FeedbackPage(
-            content = dbRecords.first.map {
-                FeedbackDto(
-                    feedback = objectMapper.readValue(it.feedbackJson),
-                    opprettet = it.opprettet,
-                    id = it.id!!,
-                    team = it.team,
-                    app = it.app
 
-                )
-            },
-            totalPages = Math.ceil(dbRecords.second.toDouble() / size).toInt(),
+        return FeedbackPage(
+            content = dbRecords.first.map(FeedbackDbRecord::toDto),
+            totalPages = ceil(dbRecords.second.toDouble() / size).toInt(),
             totalElements = dbRecords.second.toInt(),
             size = size,
             number = page
@@ -87,7 +73,7 @@ class FlexjarFrontendApi(
         )
     }
 
-    @DeleteMapping("/feedback/{id}")
+    @DeleteMapping("/api/v1/intern/feedback/{id}")
     @ResponseBody
     @ProtectedWithClaims(issuer = "azureator")
     fun slettFeedback(@PathVariable id: String): ResponseEntity<Void> {
@@ -116,6 +102,48 @@ class FlexjarFrontendApi(
             return ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
+
+    @PostMapping("/api/v1/intern/feedback/{id}/tags")
+    @ResponseBody
+    @ProtectedWithClaims(issuer = "azureator")
+    fun lagreTag(@PathVariable id: String, @RequestBody tag: TagDto): ResponseEntity<Void> {
+        clientIdValidation.validateClientId(
+            ClientIdValidation.NamespaceAndApp(
+                namespace = "flex",
+                app = "flexjar-frontend"
+            )
+        )
+
+        try {
+            val feedback = feedbackRepository.findById(id).get()
+            val feedbackDto = feedback.toDto()
+
+            val tags = feedbackDto.tags.toMutableSet()
+            tags.add(tag.tag.lowercase(Locale.getDefault()))
+
+            val feedbackMedTag = feedback.copy(
+                tags = tags.joinToString(",")
+            )
+            feedbackRepository.save(feedbackMedTag)
+
+            return ResponseEntity<Void>(HttpStatus.CREATED)
+        } catch (e: NoSuchElementException) {
+            return ResponseEntity<Void>(HttpStatus.NOT_FOUND)
+        } catch (e: Exception) {
+            return ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+}
+
+fun FeedbackDbRecord.toDto(): FeedbackDto {
+    return FeedbackDto(
+        feedback = objectMapper.readValue(this.feedbackJson),
+        opprettet = this.opprettet,
+        id = this.id!!,
+        team = this.team,
+        app = this.app,
+        tags = this.tags?.split(",")?.toSet() ?: emptySet()
+    )
 }
 
 data class FeedbackDto(
@@ -123,7 +151,8 @@ data class FeedbackDto(
     val opprettet: OffsetDateTime,
     val id: String,
     val team: String,
-    val app: String?
+    val app: String?,
+    val tags: Set<String>
 )
 
 data class FeedbackPage(
@@ -132,4 +161,8 @@ data class FeedbackPage(
     val totalElements: Int,
     val size: Int,
     val number: Int
+)
+
+data class TagDto(
+    val tag: String
 )

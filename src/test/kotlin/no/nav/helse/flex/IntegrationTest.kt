@@ -3,6 +3,7 @@ package no.nav.helse.flex
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.helse.flex.api.FeedbackDto
 import no.nav.helse.flex.api.FeedbackPage
+import no.nav.helse.flex.api.TagDto
 import no.nav.helse.flex.repository.FeedbackDbRecord
 import no.nav.helse.flex.repository.FeedbackRepository
 import org.amshove.kluent.shouldBeEqualTo
@@ -177,5 +178,54 @@ class IntegrationTest : FellesTestOppsett() {
             delete("/api/v1/intern/feedback/12345")
                 .header("Authorization", "Bearer ${skapAzureJwt()}")
         ).andExpect(status().isNotFound)
+    }
+
+    @Test
+    fun `Kan lagre og hente tags`() {
+        val feedbackInn = mapOf(
+            "feedback" to "hade",
+            "app" to "spinnsyn-frontend",
+            "feedbackId" to "spinnsyn refusjon",
+            "indre" to mapOf(
+                "hei" to 5
+            )
+        )
+
+        val serialisertTilString = feedbackInn.serialisertTilString()
+
+        mockMvc.perform(
+            post("/api/v1/feedback")
+                .header("Authorization", "Bearer ${tokenxToken()}")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(serialisertTilString)
+        ).andExpect(status().isAccepted)
+
+        val response = mockMvc.perform(
+            get("/api/v1/intern/feedback")
+                .header("Authorization", "Bearer ${skapAzureJwt()}")
+        ).andExpect(status().isOk).andReturn().response.contentAsString
+
+        val deserialsert: List<FeedbackDto> = objectMapper.readValue(response)
+        deserialsert shouldHaveSize 1
+        val first = deserialsert.first()
+        first.feedback shouldBeEqualTo feedbackInn
+        first.tags.shouldHaveSize(0)
+
+        mockMvc.perform(
+            post("/api/v1/intern/feedback/${first.id}/tags")
+                .header("Authorization", "Bearer ${skapAzureJwt()}")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(TagDto("yrkesskade").serialisertTilString())
+        ).andExpect(status().isCreated)
+
+        val responseNy = mockMvc.perform(
+            get("/api/v1/intern/feedback")
+                .header("Authorization", "Bearer ${skapAzureJwt()}")
+        ).andExpect(status().isOk).andReturn().response.contentAsString
+
+        val deserialserNy: List<FeedbackDto> = objectMapper.readValue(responseNy)
+        deserialserNy shouldHaveSize 1
+        val oppdatert = deserialserNy.first()
+        oppdatert.tags.shouldBeEqualTo(setOf("yrkesskade"))
     }
 }
