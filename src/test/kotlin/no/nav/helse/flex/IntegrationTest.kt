@@ -239,5 +239,17 @@ class IntegrationTest : FellesTestOppsett() {
             get("/api/v1/intern/feedback/tags")
                 .header("Authorization", "Bearer ${skapAzureJwt()}")
         ).andExpect(status().isOk).andReturn().response.contentAsString shouldBeEqualTo "[\"yrkesskade\"]"
+
+        // Slett tag
+        mockMvc.perform(
+            delete("/api/v1/intern/feedback/${first.id}/tags?tag=yrkesskade")
+                .header("Authorization", "Bearer ${skapAzureJwt()}")
+        ).andExpect(status().isNoContent)
+
+        // Tags etterpå
+        mockMvc.perform(
+            get("/api/v1/intern/feedback/tags")
+                .header("Authorization", "Bearer ${skapAzureJwt()}")
+        ).andExpect(status().isOk).andReturn().response.contentAsString shouldBeEqualTo "[]"
     }
 }
