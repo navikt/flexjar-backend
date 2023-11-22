@@ -147,6 +147,41 @@ class FlexjarFrontendApi(
 
         return feedbackRepository.finnAlleDistinctTags().map { it?.split(",")?.toSet() ?: emptySet() }.flatten().toSet()
     }
+
+    @DeleteMapping("/api/v1/intern/feedback/{id}/tags")
+    @ResponseBody
+    @ProtectedWithClaims(issuer = "azureator")
+    fun slettTag(@PathVariable id: String, @RequestParam tag: String): ResponseEntity<Void> {
+        clientIdValidation.validateClientId(
+            ClientIdValidation.NamespaceAndApp(
+                namespace = "flex",
+                app = "flexjar-frontend"
+            )
+        )
+
+        try {
+            val feedback = feedbackRepository.findById(id).get()
+            val feedbackDto = feedback.toDto()
+
+            val tags = feedbackDto.tags.toMutableSet()
+            tags.remove(tag.lowercase(Locale.getDefault()))
+
+            val feedbackMedTag = feedback.copy(
+                tags = if (tags.isEmpty()) {
+                    null
+                } else {
+                    tags.joinToString(",")
+                }
+            )
+            feedbackRepository.save(feedbackMedTag)
+
+            return ResponseEntity<Void>(HttpStatus.NO_CONTENT)
+        } catch (e: NoSuchElementException) {
+            return ResponseEntity<Void>(HttpStatus.NOT_FOUND)
+        } catch (e: Exception) {
+            return ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
 }
 
 fun FeedbackDbRecord.toDto(): FeedbackDto {
