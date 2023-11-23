@@ -41,6 +41,7 @@ spec:
           - id: "020e6140-6395-430b-9021-65de50e42a0f" #flexjar
           - id: "3a541678-8965-45c4-844b-486a8b9b94a3" #teamsykmelding
           - id: "6b8065ba-98e2-4e2d-98d4-f9768c7fbb38" #helsearbeidsgiver
+          - id: "c0227409-2085-4eb2-b487-c4ba270986a3" #tbd
   gcp:
     sqlInstances:
       - type: POSTGRES_14
