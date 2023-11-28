@@ -72,7 +72,8 @@ class FeedbackDbRecordRowMapper : RowMapper<FeedbackDbRecord> {
             opprettet = rs.getObject("opprettet", OffsetDateTime::class.java),
             feedbackJson = rs.getString("feedback_json"),
             team = rs.getString("team"),
-            app = rs.getString("app")
+            app = rs.getString("app"),
+            tags = rs.getString("tags")
         )
     }
 }
