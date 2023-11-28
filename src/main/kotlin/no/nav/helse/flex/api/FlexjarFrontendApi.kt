@@ -105,8 +105,9 @@ class FlexjarFrontendApi(
 
     @PostMapping("/api/v1/intern/feedback/{id}/tags")
     @ResponseBody
+    @ResponseStatus(HttpStatus.CREATED)
     @ProtectedWithClaims(issuer = "azureator")
-    fun lagreTag(@PathVariable id: String, @RequestBody tag: TagDto): ResponseEntity<Void> {
+    fun lagreTag(@PathVariable id: String, @RequestBody tag: TagDto): FeedbackDto {
         clientIdValidation.validateClientId(
             ClientIdValidation.NamespaceAndApp(
                 namespace = "flex",
@@ -114,24 +115,18 @@ class FlexjarFrontendApi(
             )
         )
 
-        try {
-            val feedback = feedbackRepository.findById(id).get()
-            val feedbackDto = feedback.toDto()
+        val feedback = feedbackRepository.findById(id).get()
+        val feedbackDto = feedback.toDto()
 
-            val tags = feedbackDto.tags.toMutableSet()
-            tags.add(tag.tag.lowercase(Locale.getDefault()))
+        val tags = feedbackDto.tags.toMutableSet()
+        tags.add(tag.tag.lowercase(Locale.getDefault()))
 
-            val feedbackMedTag = feedback.copy(
-                tags = tags.joinToString(",")
-            )
-            feedbackRepository.save(feedbackMedTag)
+        val feedbackMedTag = feedback.copy(
+            tags = tags.joinToString(",")
+        )
+        feedbackRepository.save(feedbackMedTag)
 
-            return ResponseEntity<Void>(HttpStatus.CREATED)
-        } catch (e: NoSuchElementException) {
-            return ResponseEntity<Void>(HttpStatus.NOT_FOUND)
-        } catch (e: Exception) {
-            return ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR)
-        }
+        return feedbackMedTag.toDto()
     }
 
     @GetMapping("/api/v1/intern/feedback/tags")

@@ -32,6 +32,7 @@ class GlobalExceptionHandler {
                 log.error(ex.message, ex)
                 skapResponseEntity(HttpStatus.BAD_REQUEST)
             }
+            is NoSuchElementException -> skapResponseEntity(HttpStatus.NOT_FOUND)
             is JwtTokenInvalidClaimException -> skapResponseEntity(HttpStatus.UNAUTHORIZED)
             is JwtTokenUnauthorizedException -> skapResponseEntity(HttpStatus.UNAUTHORIZED)
             is HttpMediaTypeNotAcceptableException -> skapResponseEntity(HttpStatus.NOT_ACCEPTABLE)
