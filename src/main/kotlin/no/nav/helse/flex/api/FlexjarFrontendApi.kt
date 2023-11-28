@@ -2,6 +2,7 @@ package no.nav.helse.flex.api
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.helse.flex.clientidvalidation.ClientIdValidation
+import no.nav.helse.flex.logger
 import no.nav.helse.flex.objectMapper
 import no.nav.helse.flex.repository.FeedbackDbRecord
 import no.nav.helse.flex.repository.FeedbackRepository
@@ -114,7 +115,7 @@ class FlexjarFrontendApi(
                 app = "flexjar-frontend"
             )
         )
-
+        logger().info("Lagrer tag ${tag.tag} på $id")
         val feedback = feedbackRepository.findById(id).get()
         val feedbackDto = feedback.toDto()
 
