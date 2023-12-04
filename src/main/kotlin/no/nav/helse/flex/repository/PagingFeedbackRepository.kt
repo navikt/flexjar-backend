@@ -39,7 +39,7 @@ class PagingFeedbackRepository(
         if (fritekst != null) {
             mapSqlParameterSource.addValue("fritekst", "%$fritekst%")
         }
-        val offset = page * size // If your page number starts at 0
+        val offset = page.toBigInteger() * size.toBigInteger() // If your page number starts at 0
 
         val rowCountSql = "SELECT count(*) AS row_count FROM feedback $whereClause"
         val total = jdbcTemplate.queryForObject(
