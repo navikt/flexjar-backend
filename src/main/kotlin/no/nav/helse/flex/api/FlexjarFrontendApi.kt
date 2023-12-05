@@ -24,7 +24,7 @@ class FlexjarFrontendApi(
 
 ) {
 
-    @GetMapping("/api/v1/intern/feedback-pagable")
+    @GetMapping("/api/v1/intern/feedback")
     @ResponseBody
     @ProtectedWithClaims(issuer = "azureator")
     fun hentFeedbackPageable(

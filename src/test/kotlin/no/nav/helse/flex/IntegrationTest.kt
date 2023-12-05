@@ -1,7 +1,6 @@
 package no.nav.helse.flex
 
 import com.fasterxml.jackson.module.kotlin.readValue
-import no.nav.helse.flex.api.FeedbackDto
 import no.nav.helse.flex.api.FeedbackPage
 import no.nav.helse.flex.api.TagDto
 import no.nav.helse.flex.repository.FeedbackDbRecord
@@ -53,7 +52,7 @@ class IntegrationTest : FellesTestOppsett() {
         lagretFeilmelding.opprettet shouldBeLessOrEqualTo OffsetDateTime.now()
 
         val response = mockMvc.perform(
-            get("/api/v1/intern/feedback-pagable")
+            get("/api/v1/intern/feedback")
                 .header("Authorization", "Bearer ${skapAzureJwt()}")
         ).andExpect(status().isOk).andReturn().response.contentAsString
 
@@ -66,9 +65,8 @@ class IntegrationTest : FellesTestOppsett() {
                 .header("Authorization", "Bearer ${skapAzureJwt()}")
         ).andExpect(status().isNoContent)
 
-
         val responsePaginert = mockMvc.perform(
-            get("/api/v1/intern/feedback-pagable")
+            get("/api/v1/intern/feedback")
                 .header("Authorization", "Bearer ${skapAzureJwt()}")
         ).andExpect(status().isOk).andReturn().response.contentAsString
 
@@ -78,7 +76,7 @@ class IntegrationTest : FellesTestOppsett() {
         deserialsertPaginert.totalPages shouldBeEqualTo 1
 
         val responsePaginert2 = mockMvc.perform(
-            get("/api/v1/intern/feedback-pagable?medTekst=true")
+            get("/api/v1/intern/feedback?medTekst=true")
                 .header("Authorization", "Bearer ${skapAzureJwt()}")
         ).andExpect(status().isOk).andReturn().response.contentAsString
 
@@ -88,7 +86,7 @@ class IntegrationTest : FellesTestOppsett() {
         deserialsertPaginert2.totalPages shouldBeEqualTo 0
 
         mockMvc.perform(
-            get("/api/v1/intern/feedback-pagable?medTekst=true&fritekst=sdfsdf")
+            get("/api/v1/intern/feedback?medTekst=true&fritekst=sdfsdf")
                 .header("Authorization", "Bearer ${skapAzureJwt()}")
         ).andExpect(status().isOk).andReturn().response.contentAsString
     }
@@ -96,7 +94,7 @@ class IntegrationTest : FellesTestOppsett() {
     @Test
     fun `Henter data som flexmedlem`() {
         val contentAsString = mockMvc.perform(
-            get("/api/v1/intern/feedback-pagable")
+            get("/api/v1/intern/feedback")
                 .header("Authorization", "Bearer ${skapAzureJwt()}")
         ).andExpect(status().isOk).andReturn().response.contentAsString
 
@@ -133,7 +131,7 @@ class IntegrationTest : FellesTestOppsett() {
         )
 
         val contentAsString = mockMvc.perform(
-            get("/api/v1/intern/feedback-pagable?team=team_annet")
+            get("/api/v1/intern/feedback?team=team_annet")
                 .header("Authorization", "Bearer ${skapAzureJwt()}")
         ).andExpect(status().isOk).andReturn().response.contentAsString
 
@@ -199,7 +197,7 @@ class IntegrationTest : FellesTestOppsett() {
         ).andExpect(status().isAccepted)
 
         val response = mockMvc.perform(
-            get("/api/v1/intern/feedback-pagable")
+            get("/api/v1/intern/feedback")
                 .header("Authorization", "Bearer ${skapAzureJwt()}")
         ).andExpect(status().isOk).andReturn().response.contentAsString
 
@@ -217,7 +215,7 @@ class IntegrationTest : FellesTestOppsett() {
         ).andExpect(status().isCreated)
 
         val responseNy = mockMvc.perform(
-            get("/api/v1/intern/feedback-pagable")
+            get("/api/v1/intern/feedback")
                 .header("Authorization", "Bearer ${skapAzureJwt()}")
         ).andExpect(status().isOk).andReturn().response.contentAsString
 
