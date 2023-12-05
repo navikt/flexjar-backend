@@ -53,27 +53,19 @@ class IntegrationTest : FellesTestOppsett() {
         lagretFeilmelding.opprettet shouldBeLessOrEqualTo OffsetDateTime.now()
 
         val response = mockMvc.perform(
-            get("/api/v1/intern/feedback")
+            get("/api/v1/intern/feedback-pagable")
                 .header("Authorization", "Bearer ${skapAzureJwt()}")
         ).andExpect(status().isOk).andReturn().response.contentAsString
 
-        val deserialsert: List<FeedbackDto> = objectMapper.readValue(response)
-        deserialsert shouldHaveSize 1
-        deserialsert.first().feedback shouldBeEqualTo feedbackInn
+        val deserialsert: FeedbackPage = objectMapper.readValue(response)
+        deserialsert.content shouldHaveSize 1
+        deserialsert.content.first().feedback shouldBeEqualTo feedbackInn
 
         mockMvc.perform(
-            delete("/api/v1/intern/feedback/${deserialsert.first().id}")
+            delete("/api/v1/intern/feedback/${deserialsert.content.first().id}")
                 .header("Authorization", "Bearer ${skapAzureJwt()}")
         ).andExpect(status().isNoContent)
 
-        val responseNy = mockMvc.perform(
-            get("/api/v1/intern/feedback")
-                .header("Authorization", "Bearer ${skapAzureJwt()}")
-        ).andExpect(status().isOk).andReturn().response.contentAsString
-
-        val deserialserNy: List<FeedbackDto> = objectMapper.readValue(responseNy)
-        deserialserNy shouldHaveSize 1
-        deserialserNy.first().feedback shouldBeEqualTo feedbackInn.toMutableMap().also { it["feedback"] = "" }
 
         val responsePaginert = mockMvc.perform(
             get("/api/v1/intern/feedback-pagable")
@@ -104,11 +96,11 @@ class IntegrationTest : FellesTestOppsett() {
     @Test
     fun `Henter data som flexmedlem`() {
         val contentAsString = mockMvc.perform(
-            get("/api/v1/intern/feedback")
+            get("/api/v1/intern/feedback-pagable")
                 .header("Authorization", "Bearer ${skapAzureJwt()}")
         ).andExpect(status().isOk).andReturn().response.contentAsString
 
-        contentAsString shouldBeEqualTo "[]"
+        contentAsString shouldBeEqualTo "{\"content\":[],\"totalPages\":0,\"totalElements\":0,\"size\":10,\"number\":0}"
     }
 
     @Test
@@ -141,14 +133,14 @@ class IntegrationTest : FellesTestOppsett() {
         )
 
         val contentAsString = mockMvc.perform(
-            get("/api/v1/intern/feedback?team=team_annet")
+            get("/api/v1/intern/feedback-pagable?team=team_annet")
                 .header("Authorization", "Bearer ${skapAzureJwt()}")
         ).andExpect(status().isOk).andReturn().response.contentAsString
 
-        val result = objectMapper.readValue<List<FeedbackDto>>(contentAsString)
+        val result = objectMapper.readValue<FeedbackPage>(contentAsString)
 
-        result shouldHaveSize 1
-        result[0].team shouldBeEqualTo "team_annet"
+        result.content shouldHaveSize 1
+        result.content[0].team shouldBeEqualTo "team_annet"
     }
 
     @Test
@@ -207,13 +199,13 @@ class IntegrationTest : FellesTestOppsett() {
         ).andExpect(status().isAccepted)
 
         val response = mockMvc.perform(
-            get("/api/v1/intern/feedback")
+            get("/api/v1/intern/feedback-pagable")
                 .header("Authorization", "Bearer ${skapAzureJwt()}")
         ).andExpect(status().isOk).andReturn().response.contentAsString
 
-        val deserialsert: List<FeedbackDto> = objectMapper.readValue(response)
-        deserialsert shouldHaveSize 1
-        val first = deserialsert.first()
+        val deserialsert: FeedbackPage = objectMapper.readValue(response)
+        deserialsert.content shouldHaveSize 1
+        val first = deserialsert.content.first()
         first.feedback shouldBeEqualTo feedbackInn
         first.tags.shouldHaveSize(0)
 
@@ -225,13 +217,13 @@ class IntegrationTest : FellesTestOppsett() {
         ).andExpect(status().isCreated)
 
         val responseNy = mockMvc.perform(
-            get("/api/v1/intern/feedback")
+            get("/api/v1/intern/feedback-pagable")
                 .header("Authorization", "Bearer ${skapAzureJwt()}")
         ).andExpect(status().isOk).andReturn().response.contentAsString
 
-        val deserialserNy: List<FeedbackDto> = objectMapper.readValue(responseNy)
-        deserialserNy shouldHaveSize 1
-        val oppdatert = deserialserNy.first()
+        val deserialserNy: FeedbackPage = objectMapper.readValue(responseNy)
+        deserialserNy.content shouldHaveSize 1
+        val oppdatert = deserialserNy.content.first()
         oppdatert.tags.shouldBeEqualTo(setOf("yrkesskade"))
 
         // Tags etterpå

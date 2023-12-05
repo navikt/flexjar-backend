@@ -24,20 +24,6 @@ class FlexjarFrontendApi(
 
 ) {
 
-    @GetMapping("/api/v1/intern/feedback")
-    @ResponseBody
-    @ProtectedWithClaims(issuer = "azureator")
-    fun hentFeedback(@RequestParam team: String?): List<FeedbackDto> {
-        clientIdValidation.validateClientId(
-            ClientIdValidation.NamespaceAndApp(
-                namespace = "flex",
-                app = "flexjar-frontend"
-            )
-        )
-
-        return feedbackRepository.getAllByTeam(team ?: "flex").toList().map(FeedbackDbRecord::toDto)
-    }
-
     @GetMapping("/api/v1/intern/feedback-pagable")
     @ResponseBody
     @ProtectedWithClaims(issuer = "azureator")

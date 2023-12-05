@@ -20,9 +20,7 @@ class PagingFeedbackRepository(
         medTekst: Boolean,
         fritekst: String?
     ): Pair<List<FeedbackDbRecord>, Long> {
-        // Replace with your actual criteria and parameters
-        // Replace with your actual criteria and parameters
-        var whereClause = "WHERE team = :team" +
+        val whereClause = "WHERE team = :team" +
             if (medTekst) {
                 " AND feedback_json::json->>'feedback' <> ''"
             } else {
