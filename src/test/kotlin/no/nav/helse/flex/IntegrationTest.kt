@@ -213,22 +213,28 @@ class IntegrationTest : FellesTestOppsett() {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(TagDto("yrkesskade").serialisertTilString())
         ).andExpect(status().isCreated)
+        mockMvc.perform(
+            post("/api/v1/intern/feedback/${first.id}/tags")
+                .header("Authorization", "Bearer ${skapAzureJwt()}")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(TagDto("stjerne").serialisertTilString())
+        ).andExpect(status().isCreated)
 
         val responseNy = mockMvc.perform(
-            get("/api/v1/intern/feedback")
+            get("/api/v1/intern/feedback?fritekst=yrkesskade&stjerne=true")
                 .header("Authorization", "Bearer ${skapAzureJwt()}")
         ).andExpect(status().isOk).andReturn().response.contentAsString
 
         val deserialserNy: FeedbackPage = objectMapper.readValue(responseNy)
         deserialserNy.content shouldHaveSize 1
         val oppdatert = deserialserNy.content.first()
-        oppdatert.tags.shouldBeEqualTo(setOf("yrkesskade"))
+        oppdatert.tags.shouldBeEqualTo(setOf("stjerne", "yrkesskade"))
 
         // Tags etterpå
         mockMvc.perform(
             get("/api/v1/intern/feedback/tags")
                 .header("Authorization", "Bearer ${skapAzureJwt()}")
-        ).andExpect(status().isOk).andReturn().response.contentAsString shouldBeEqualTo "[\"yrkesskade\"]"
+        ).andExpect(status().isOk).andReturn().response.contentAsString shouldBeEqualTo "[\"yrkesskade\",\"stjerne\"]"
 
         // Slett tag
         mockMvc.perform(
@@ -240,6 +246,6 @@ class IntegrationTest : FellesTestOppsett() {
         mockMvc.perform(
             get("/api/v1/intern/feedback/tags")
                 .header("Authorization", "Bearer ${skapAzureJwt()}")
-        ).andExpect(status().isOk).andReturn().response.contentAsString shouldBeEqualTo "[]"
+        ).andExpect(status().isOk).andReturn().response.contentAsString shouldBeEqualTo "[\"stjerne\"]"
     }
 }

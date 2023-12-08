@@ -19,11 +19,17 @@ class PagingFeedbackRepository(
         size: Int,
         team: String,
         medTekst: Boolean,
-        fritekst: String?
+        fritekst: String?,
+        stjerne: Boolean
     ): Triple<List<FeedbackDbRecord>, Long, Int> {
         val whereClause = "WHERE team = :team" +
             if (medTekst) {
                 " AND feedback_json::json->>'feedback' <> ''"
+            } else {
+                ""
+            } +
+            if (stjerne) {
+                " AND tags like '%stjerne'"
             } else {
                 ""
             } +

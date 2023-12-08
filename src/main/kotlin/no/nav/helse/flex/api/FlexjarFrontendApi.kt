@@ -32,6 +32,7 @@ class FlexjarFrontendApi(
         @RequestParam page: Int?,
         @RequestParam(defaultValue = "10") size: Int,
         @RequestParam(defaultValue = "false") medTekst: Boolean,
+        @RequestParam(defaultValue = "false") stjerne: Boolean,
         @RequestParam fritekst: String?
     ): FeedbackPage {
         clientIdValidation.validateClientId(
@@ -46,7 +47,8 @@ class FlexjarFrontendApi(
             size = size,
             team = team,
             medTekst = medTekst,
-            fritekst = fritekst
+            fritekst = fritekst,
+            stjerne = stjerne
         )
 
         return FeedbackPage(
