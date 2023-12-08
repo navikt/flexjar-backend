@@ -28,7 +28,7 @@ class PagingFeedbackRepository(
                 ""
             } +
             if (fritekst != null) {
-                " AND feedback_json like :fritekst "
+                " AND (feedback_json like :fritekst OR tags like :fritekstTags )"
             } else {
                 ""
             }
@@ -37,6 +37,7 @@ class PagingFeedbackRepository(
         mapSqlParameterSource.addValue("team", team)
         if (fritekst != null) {
             mapSqlParameterSource.addValue("fritekst", "%$fritekst%")
+            mapSqlParameterSource.addValue("fritekstTags", "%$fritekst%")
         }
 
         val rowCountSql = "SELECT count(*) AS row_count FROM feedback $whereClause"
