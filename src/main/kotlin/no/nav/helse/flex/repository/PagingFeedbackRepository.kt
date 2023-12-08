@@ -28,7 +28,7 @@ class PagingFeedbackRepository(
                 ""
             } +
             if (fritekst != null) {
-                " AND feedback_json like :fritekst "
+                " AND (feedback_json like :fritekst OR tags like :fritekst )"
             } else {
                 ""
             }
