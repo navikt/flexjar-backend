@@ -29,7 +29,7 @@ class FlexjarFrontendApi(
     @ProtectedWithClaims(issuer = "azureator")
     fun hentFeedbackPageable(
         @RequestParam(defaultValue = "flex") team: String,
-        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam page: Int?,
         @RequestParam(defaultValue = "10") size: Int,
         @RequestParam(defaultValue = "false") medTekst: Boolean,
         @RequestParam fritekst: String?
@@ -42,7 +42,7 @@ class FlexjarFrontendApi(
         )
 
         val dbRecords = pagingFeedbackRepository.findPaginated(
-            page = page,
+            pageInn = page,
             size = size,
             team = team,
             medTekst = medTekst,
@@ -54,8 +54,7 @@ class FlexjarFrontendApi(
             totalPages = ceil(dbRecords.second.toDouble() / size).toInt(),
             totalElements = dbRecords.second.toInt(),
             size = size,
-            number = page
-
+            number = dbRecords.third
         )
     }
 

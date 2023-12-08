@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Service
 import java.sql.ResultSet
 import java.time.OffsetDateTime
+import kotlin.math.ceil
 
 @Service
 class PagingFeedbackRepository(
@@ -14,12 +15,12 @@ class PagingFeedbackRepository(
 ) {
 
     fun findPaginated(
-        page: Int,
+        pageInn: Int?,
         size: Int,
         team: String,
         medTekst: Boolean,
         fritekst: String?
-    ): Pair<List<FeedbackDbRecord>, Long> {
+    ): Triple<List<FeedbackDbRecord>, Long, Int> {
         val whereClause = "WHERE team = :team" +
             if (medTekst) {
                 " AND feedback_json::json->>'feedback' <> ''"
@@ -37,7 +38,6 @@ class PagingFeedbackRepository(
         if (fritekst != null) {
             mapSqlParameterSource.addValue("fritekst", "%$fritekst%")
         }
-        val offset = page.toBigInteger() * size.toBigInteger() // If your page number starts at 0
 
         val rowCountSql = "SELECT count(*) AS row_count FROM feedback $whereClause"
         val total = jdbcTemplate.queryForObject(
@@ -45,11 +45,15 @@ class PagingFeedbackRepository(
             mapSqlParameterSource,
             Int::class.java
         ) ?: 0
+        val totalPages = ceil(total.toDouble() / size).toInt()
 
+        val page = pageInn ?: (totalPages - 1).coerceAtLeast(0)
+
+        val offset = page.toBigInteger() * size.toBigInteger() // If your page number starts at 0
         val query =
             "SELECT * FROM feedback " +
                 whereClause +
-                " ORDER BY opprettet DESC" +
+                " ORDER BY opprettet ASC" +
                 " LIMIT " + size +
                 " OFFSET " + offset
 
@@ -59,7 +63,7 @@ class PagingFeedbackRepository(
             FeedbackDbRecordRowMapper()
         )
 
-        return Pair(pageItems, total.toLong())
+        return Triple(pageItems, total.toLong(), page)
     }
 }
 
