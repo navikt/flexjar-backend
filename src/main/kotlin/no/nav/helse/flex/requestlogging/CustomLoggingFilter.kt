@@ -8,11 +8,10 @@ import org.springframework.web.filter.OncePerRequestFilter
 
 @Component
 class CustomLoggingFilter : OncePerRequestFilter() {
-
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
-        filterChain: FilterChain
+        filterChain: FilterChain,
     ) {
         filterChain.doFilter(request, response)
 

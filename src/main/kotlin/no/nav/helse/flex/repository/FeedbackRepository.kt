@@ -9,7 +9,6 @@ import java.time.OffsetDateTime
 
 @Repository
 interface FeedbackRepository : CrudRepository<FeedbackDbRecord, String> {
-
     @Query("SELECT DISTINCT f.tags FROM feedback f")
     fun finnAlleDistinctTags(): List<String?>
 }
@@ -22,5 +21,5 @@ data class FeedbackDbRecord(
     val feedbackJson: String,
     val team: String,
     val app: String? = null,
-    val tags: String? = null
+    val tags: String? = null,
 )

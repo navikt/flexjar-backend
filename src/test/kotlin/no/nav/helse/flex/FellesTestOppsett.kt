@@ -21,7 +21,6 @@ private class PostgreSQLContainer14 : PostgreSQLContainer<PostgreSQLContainer14>
 @SpringBootTest(classes = [Application::class])
 @AutoConfigureMockMvc(print = MockMvcPrint.NONE, printOnlyOnFailure = false)
 abstract class FellesTestOppsett {
-
     @Autowired
     lateinit var server: MockOAuth2Server
 
@@ -29,7 +28,6 @@ abstract class FellesTestOppsett {
     lateinit var mockMvc: MockMvc
 
     companion object {
-
         init {
             PostgreSQLContainer14().apply {
                 // Cloud SQL har wal_level = 'logical' på grunn av flagget cloudsql.logical_decoding i
@@ -48,12 +46,13 @@ abstract class FellesTestOppsett {
         audience: String = "flexjar-backend-client-id",
         issuerId: String = "tokenx",
         clientId: String = "dev-gcp:flex:spinnsyn-frontend",
-        claims: Map<String, Any> = mapOf(
-            "acr" to "idporten-loa-high",
-            "idp" to "idporten",
-            "client_id" to clientId,
-            "pid" to fnr
-        )
+        claims: Map<String, Any> =
+            mapOf(
+                "acr" to "idporten-loa-high",
+                "idp" to "idporten",
+                "client_id" to clientId,
+                "pid" to fnr,
+            ),
     ): String {
         return server.issueToken(
             issuerId,
@@ -63,8 +62,8 @@ abstract class FellesTestOppsett {
                 subject = UUID.randomUUID().toString(),
                 audience = listOf(audience),
                 claims = claims,
-                expiry = 3600
-            )
+                expiry = 3600,
+            ),
         ).serialize()
     }
 }
@@ -74,7 +73,7 @@ fun MockOAuth2Server.token(
     issuerId: String,
     clientId: String = UUID.randomUUID().toString(),
     audience: String,
-    claims: Map<String, Any> = mapOf("acr" to "idporten-loa-high")
+    claims: Map<String, Any> = mapOf("acr" to "idporten-loa-high"),
 ): String {
     return this.issueToken(
         issuerId,
@@ -84,15 +83,15 @@ fun MockOAuth2Server.token(
             subject = subject,
             audience = listOf(audience),
             claims = claims,
-            expiry = 3600
-        )
+            expiry = 3600,
+        ),
     ).serialize()
 }
 
 fun FellesTestOppsett.buildAzureClaimSet(
     subject: String,
     issuer: String = "azureator",
-    audience: String = "flexjar-backend-client-id"
+    audience: String = "flexjar-backend-client-id",
 ): String {
     val claims = HashMap<String, String>()
 
@@ -101,9 +100,8 @@ fun FellesTestOppsett.buildAzureClaimSet(
         issuerId = issuer,
         clientId = subject,
         audience = audience,
-        claims = claims
+        claims = claims,
     )
 }
 
-fun FellesTestOppsett.skapAzureJwt(subject: String = "flexjar-frontend-client-id") =
-    buildAzureClaimSet(subject = subject)
+fun FellesTestOppsett.skapAzureJwt(subject: String = "flexjar-frontend-client-id") = buildAzureClaimSet(subject = subject)
