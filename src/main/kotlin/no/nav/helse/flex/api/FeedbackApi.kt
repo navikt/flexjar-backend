@@ -18,36 +18,42 @@ import java.time.OffsetDateTime
 @RequestMapping("/api/v1")
 class FeedbackApi(
     private val contextHolder: TokenValidationContextHolder,
-    private val feedbackRepository: FeedbackRepository
+    private val feedbackRepository: FeedbackRepository,
 ) {
-
     @PostMapping("/feedback")
     @ResponseStatus(HttpStatus.ACCEPTED)
     @ProtectedWithClaims(issuer = "tokenx")
-    fun lagreFeedback(@RequestBody feedback: String) {
+    fun lagreFeedback(
+        @RequestBody feedback: String,
+    ) {
         val clientId = contextHolder.tokenValidationContext.getClaims("tokenx").getStringClaim("client_id")
         val (team, app) = clientId.split(":").takeLast(2)
 
         feedback.lagre(
             app = app,
-            team = team
+            team = team,
         )
     }
 
     @PostMapping("/feedback/azure")
     @ResponseStatus(HttpStatus.ACCEPTED)
     @ProtectedWithClaims(issuer = "azureator")
-    fun lagreFeedbackAzure(@RequestBody feedback: String) {
+    fun lagreFeedbackAzure(
+        @RequestBody feedback: String,
+    ) {
         val azpName = contextHolder.tokenValidationContext.getClaims("azureator").getStringClaim("azp_name")
         val (team, app) = azpName.split(":").takeLast(2)
 
         feedback.lagre(
             app = app,
-            team = team
+            team = team,
         )
     }
 
-    private fun String.lagre(app: String, team: String) {
+    private fun String.lagre(
+        app: String,
+        team: String,
+    ) {
         try {
             tilFeedbackInputDto()
         } catch (e: Exception) {
@@ -59,8 +65,8 @@ class FeedbackApi(
                 opprettet = OffsetDateTime.now(),
                 feedbackJson = this,
                 app = app,
-                team = team
-            )
+                team = team,
+            ),
         )
     }
 }
@@ -69,7 +75,7 @@ data class FeedbackInputDto(
     val feedback: String?,
     val svar: String?,
     val app: String,
-    val feedbackId: String
+    val feedbackId: String,
 )
 
 fun String.tilFeedbackInputDto(): FeedbackInputDto = objectMapper.readValue(this)

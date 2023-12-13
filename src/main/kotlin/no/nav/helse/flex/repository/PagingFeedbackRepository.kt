@@ -10,34 +10,33 @@ import kotlin.math.ceil
 
 @Service
 class PagingFeedbackRepository(
-    private val jdbcTemplate: NamedParameterJdbcTemplate
-
+    private val jdbcTemplate: NamedParameterJdbcTemplate,
 ) {
-
     fun findPaginated(
         pageInn: Int?,
         size: Int,
         team: String,
         medTekst: Boolean,
         fritekst: String?,
-        stjerne: Boolean
+        stjerne: Boolean,
     ): Triple<List<FeedbackDbRecord>, Long, Int> {
-        val whereClause = "WHERE team = :team" +
-            if (medTekst) {
-                " AND feedback_json::json->>'feedback' <> ''"
-            } else {
-                ""
-            } +
-            if (stjerne) {
-                " AND tags like '%stjerne'"
-            } else {
-                ""
-            } +
-            if (fritekst != null) {
-                " AND (feedback_json like :fritekst OR tags like :fritekstTags )"
-            } else {
-                ""
-            }
+        val whereClause =
+            "WHERE team = :team" +
+                if (medTekst) {
+                    " AND feedback_json::json->>'feedback' <> ''"
+                } else {
+                    ""
+                } +
+                if (stjerne) {
+                    " AND tags like '%stjerne'"
+                } else {
+                    ""
+                } +
+                if (fritekst != null) {
+                    " AND (feedback_json like :fritekst OR tags like :fritekstTags )"
+                } else {
+                    ""
+                }
 
         val mapSqlParameterSource = MapSqlParameterSource()
         mapSqlParameterSource.addValue("team", team)
@@ -47,11 +46,12 @@ class PagingFeedbackRepository(
         }
 
         val rowCountSql = "SELECT count(*) AS row_count FROM feedback $whereClause"
-        val total = jdbcTemplate.queryForObject(
-            rowCountSql,
-            mapSqlParameterSource,
-            Int::class.java
-        ) ?: 0
+        val total =
+            jdbcTemplate.queryForObject(
+                rowCountSql,
+                mapSqlParameterSource,
+                Int::class.java,
+            ) ?: 0
         val totalPages = ceil(total.toDouble() / size).toInt()
 
         val page = pageInn ?: (totalPages - 1).coerceAtLeast(0)
@@ -64,25 +64,29 @@ class PagingFeedbackRepository(
                 " LIMIT " + size +
                 " OFFSET " + offset
 
-        val pageItems: List<FeedbackDbRecord> = jdbcTemplate.query(
-            query,
-            mapSqlParameterSource,
-            FeedbackDbRecordRowMapper()
-        )
+        val pageItems: List<FeedbackDbRecord> =
+            jdbcTemplate.query(
+                query,
+                mapSqlParameterSource,
+                FeedbackDbRecordRowMapper(),
+            )
 
         return Triple(pageItems, total.toLong(), page)
     }
 }
 
 class FeedbackDbRecordRowMapper : RowMapper<FeedbackDbRecord> {
-    override fun mapRow(rs: ResultSet, rowNum: Int): FeedbackDbRecord {
+    override fun mapRow(
+        rs: ResultSet,
+        rowNum: Int,
+    ): FeedbackDbRecord {
         return FeedbackDbRecord(
             id = rs.getString("id"),
             opprettet = rs.getObject("opprettet", OffsetDateTime::class.java),
             feedbackJson = rs.getString("feedback_json"),
             team = rs.getString("team"),
             app = rs.getString("app"),
-            tags = rs.getString("tags")
+            tags = rs.getString("tags"),
         )
     }
 }

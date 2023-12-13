@@ -5,7 +5,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 
 class ApplicationTest : FellesTestOppsett() {
-
     @Test
     fun sjekkReadiness() {
         mockMvc.perform(MockMvcRequestBuilders.get("/internal/health/readiness"))

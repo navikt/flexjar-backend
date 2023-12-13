@@ -20,10 +20,8 @@ import kotlin.math.ceil
 class FlexjarFrontendApi(
     private val feedbackRepository: FeedbackRepository,
     private val pagingFeedbackRepository: PagingFeedbackRepository,
-    private val clientIdValidation: ClientIdValidation
-
+    private val clientIdValidation: ClientIdValidation,
 ) {
-
     @GetMapping("/api/v1/intern/feedback")
     @ResponseBody
     @ProtectedWithClaims(issuer = "azureator")
@@ -33,42 +31,45 @@ class FlexjarFrontendApi(
         @RequestParam(defaultValue = "10") size: Int,
         @RequestParam(defaultValue = "false") medTekst: Boolean,
         @RequestParam(defaultValue = "false") stjerne: Boolean,
-        @RequestParam fritekst: String?
+        @RequestParam fritekst: String?,
     ): FeedbackPage {
         clientIdValidation.validateClientId(
             ClientIdValidation.NamespaceAndApp(
                 namespace = "flex",
-                app = "flexjar-frontend"
-            )
+                app = "flexjar-frontend",
+            ),
         )
 
-        val dbRecords = pagingFeedbackRepository.findPaginated(
-            pageInn = page,
-            size = size,
-            team = team,
-            medTekst = medTekst,
-            fritekst = fritekst,
-            stjerne = stjerne
-        )
+        val dbRecords =
+            pagingFeedbackRepository.findPaginated(
+                pageInn = page,
+                size = size,
+                team = team,
+                medTekst = medTekst,
+                fritekst = fritekst,
+                stjerne = stjerne,
+            )
 
         return FeedbackPage(
             content = dbRecords.first.map(FeedbackDbRecord::toDto),
             totalPages = ceil(dbRecords.second.toDouble() / size).toInt(),
             totalElements = dbRecords.second.toInt(),
             size = size,
-            number = dbRecords.third
+            number = dbRecords.third,
         )
     }
 
     @DeleteMapping("/api/v1/intern/feedback/{id}")
     @ResponseBody
     @ProtectedWithClaims(issuer = "azureator")
-    fun slettFeedback(@PathVariable id: String): ResponseEntity<Void> {
+    fun slettFeedback(
+        @PathVariable id: String,
+    ): ResponseEntity<Void> {
         clientIdValidation.validateClientId(
             ClientIdValidation.NamespaceAndApp(
                 namespace = "flex",
-                app = "flexjar-frontend"
-            )
+                app = "flexjar-frontend",
+            ),
         )
 
         try {
@@ -77,9 +78,10 @@ class FlexjarFrontendApi(
             val jsonMap = objectMapper.readValue<MutableMap<String, Any>>(json)
 
             jsonMap.replace("feedback", "") ?: return ResponseEntity<Void>(HttpStatus.BAD_REQUEST)
-            val feedbackUtenFeedback = feedback.copy(
-                feedbackJson = jsonMap.serialisertTilString()
-            )
+            val feedbackUtenFeedback =
+                feedback.copy(
+                    feedbackJson = jsonMap.serialisertTilString(),
+                )
             feedbackRepository.save(feedbackUtenFeedback)
 
             return ResponseEntity<Void>(HttpStatus.NO_CONTENT)
@@ -93,12 +95,15 @@ class FlexjarFrontendApi(
     @PostMapping("/api/v1/intern/feedback/{id}/tags")
     @ResponseBody
     @ProtectedWithClaims(issuer = "azureator")
-    fun lagreTag(@PathVariable id: String, @RequestBody tag: TagDto): ResponseEntity<Void> {
+    fun lagreTag(
+        @PathVariable id: String,
+        @RequestBody tag: TagDto,
+    ): ResponseEntity<Void> {
         clientIdValidation.validateClientId(
             ClientIdValidation.NamespaceAndApp(
                 namespace = "flex",
-                app = "flexjar-frontend"
-            )
+                app = "flexjar-frontend",
+            ),
         )
 
         try {
@@ -108,9 +113,10 @@ class FlexjarFrontendApi(
             val tags = feedbackDto.tags.toMutableSet()
             tags.add(tag.tag.lowercase(Locale.getDefault()))
 
-            val feedbackMedTag = feedback.copy(
-                tags = tags.joinToString(",")
-            )
+            val feedbackMedTag =
+                feedback.copy(
+                    tags = tags.joinToString(","),
+                )
             feedbackRepository.save(feedbackMedTag)
 
             return ResponseEntity<Void>(HttpStatus.CREATED)
@@ -128,8 +134,8 @@ class FlexjarFrontendApi(
         clientIdValidation.validateClientId(
             ClientIdValidation.NamespaceAndApp(
                 namespace = "flex",
-                app = "flexjar-frontend"
-            )
+                app = "flexjar-frontend",
+            ),
         )
 
         return feedbackRepository.finnAlleDistinctTags().map { it?.split(",")?.toSet() ?: emptySet() }.flatten().toSet()
@@ -138,12 +144,15 @@ class FlexjarFrontendApi(
     @DeleteMapping("/api/v1/intern/feedback/{id}/tags")
     @ResponseBody
     @ProtectedWithClaims(issuer = "azureator")
-    fun slettTag(@PathVariable id: String, @RequestParam tag: String): ResponseEntity<Void> {
+    fun slettTag(
+        @PathVariable id: String,
+        @RequestParam tag: String,
+    ): ResponseEntity<Void> {
         clientIdValidation.validateClientId(
             ClientIdValidation.NamespaceAndApp(
                 namespace = "flex",
-                app = "flexjar-frontend"
-            )
+                app = "flexjar-frontend",
+            ),
         )
 
         try {
@@ -153,13 +162,15 @@ class FlexjarFrontendApi(
             val tags = feedbackDto.tags.toMutableSet()
             tags.remove(tag.lowercase(Locale.getDefault()))
 
-            val feedbackMedTag = feedback.copy(
-                tags = if (tags.isEmpty()) {
-                    null
-                } else {
-                    tags.joinToString(",")
-                }
-            )
+            val feedbackMedTag =
+                feedback.copy(
+                    tags =
+                        if (tags.isEmpty()) {
+                            null
+                        } else {
+                            tags.joinToString(",")
+                        },
+                )
             feedbackRepository.save(feedbackMedTag)
 
             return ResponseEntity<Void>(HttpStatus.NO_CONTENT)
@@ -178,7 +189,7 @@ fun FeedbackDbRecord.toDto(): FeedbackDto {
         id = this.id!!,
         team = this.team,
         app = this.app,
-        tags = this.tags?.split(",")?.toSet() ?: emptySet()
+        tags = this.tags?.split(",")?.toSet() ?: emptySet(),
     )
 }
 
@@ -188,7 +199,7 @@ data class FeedbackDto(
     val id: String,
     val team: String,
     val app: String?,
-    val tags: Set<String>
+    val tags: Set<String>,
 )
 
 data class FeedbackPage(
@@ -196,9 +207,9 @@ data class FeedbackPage(
     val totalPages: Int,
     val totalElements: Int,
     val size: Int,
-    val number: Int
+    val number: Int,
 )
 
 data class TagDto(
-    val tag: String
+    val tag: String,
 )

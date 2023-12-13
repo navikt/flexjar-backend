@@ -17,7 +17,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.OffsetDateTime
 
 class IntegrationTest : FellesTestOppsett() {
-
     @Autowired
     private lateinit var feedbackRepository: FeedbackRepository
 
@@ -28,14 +27,16 @@ class IntegrationTest : FellesTestOppsett() {
 
     @Test
     fun `202 ACCEPTED blir returnert ved gyldig feedback`() {
-        val feedbackInn = mapOf(
-            "feedback" to "hade",
-            "app" to "spinnsyn-frontend",
-            "feedbackId" to "spinnsyn refusjon",
-            "indre" to mapOf(
-                "hei" to 5
+        val feedbackInn =
+            mapOf(
+                "feedback" to "hade",
+                "app" to "spinnsyn-frontend",
+                "feedbackId" to "spinnsyn refusjon",
+                "indre" to
+                    mapOf(
+                        "hei" to 5,
+                    ),
             )
-        )
 
         val serialisertTilString = feedbackInn.serialisertTilString()
 
@@ -43,7 +44,7 @@ class IntegrationTest : FellesTestOppsett() {
             post("/api/v1/feedback")
                 .header("Authorization", "Bearer ${tokenxToken()}")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(serialisertTilString)
+                .content(serialisertTilString),
         ).andExpect(status().isAccepted)
 
         val lagredeFeilmeldigner = feedbackRepository.findAll()
@@ -51,10 +52,11 @@ class IntegrationTest : FellesTestOppsett() {
         val lagretFeilmelding = lagredeFeilmeldigner.first()
         lagretFeilmelding.opprettet shouldBeLessOrEqualTo OffsetDateTime.now()
 
-        val response = mockMvc.perform(
-            get("/api/v1/intern/feedback")
-                .header("Authorization", "Bearer ${skapAzureJwt()}")
-        ).andExpect(status().isOk).andReturn().response.contentAsString
+        val response =
+            mockMvc.perform(
+                get("/api/v1/intern/feedback")
+                    .header("Authorization", "Bearer ${skapAzureJwt()}"),
+            ).andExpect(status().isOk).andReturn().response.contentAsString
 
         val deserialsert: FeedbackPage = objectMapper.readValue(response)
         deserialsert.content shouldHaveSize 1
@@ -62,23 +64,25 @@ class IntegrationTest : FellesTestOppsett() {
 
         mockMvc.perform(
             delete("/api/v1/intern/feedback/${deserialsert.content.first().id}")
-                .header("Authorization", "Bearer ${skapAzureJwt()}")
+                .header("Authorization", "Bearer ${skapAzureJwt()}"),
         ).andExpect(status().isNoContent)
 
-        val responsePaginert = mockMvc.perform(
-            get("/api/v1/intern/feedback")
-                .header("Authorization", "Bearer ${skapAzureJwt()}")
-        ).andExpect(status().isOk).andReturn().response.contentAsString
+        val responsePaginert =
+            mockMvc.perform(
+                get("/api/v1/intern/feedback")
+                    .header("Authorization", "Bearer ${skapAzureJwt()}"),
+            ).andExpect(status().isOk).andReturn().response.contentAsString
 
         val deserialsertPaginert: FeedbackPage = objectMapper.readValue(responsePaginert)
         deserialsertPaginert.content shouldHaveSize 1
         deserialsertPaginert.totalElements shouldBeEqualTo 1
         deserialsertPaginert.totalPages shouldBeEqualTo 1
 
-        val responsePaginert2 = mockMvc.perform(
-            get("/api/v1/intern/feedback?medTekst=true")
-                .header("Authorization", "Bearer ${skapAzureJwt()}")
-        ).andExpect(status().isOk).andReturn().response.contentAsString
+        val responsePaginert2 =
+            mockMvc.perform(
+                get("/api/v1/intern/feedback?medTekst=true")
+                    .header("Authorization", "Bearer ${skapAzureJwt()}"),
+            ).andExpect(status().isOk).andReturn().response.contentAsString
 
         val deserialsertPaginert2: FeedbackPage = objectMapper.readValue(responsePaginert2)
         deserialsertPaginert2.content shouldHaveSize 0
@@ -87,38 +91,41 @@ class IntegrationTest : FellesTestOppsett() {
 
         mockMvc.perform(
             get("/api/v1/intern/feedback?medTekst=true&fritekst=sdfsdf")
-                .header("Authorization", "Bearer ${skapAzureJwt()}")
+                .header("Authorization", "Bearer ${skapAzureJwt()}"),
         ).andExpect(status().isOk).andReturn().response.contentAsString
     }
 
     @Test
     fun `Henter data som flexmedlem`() {
-        val contentAsString = mockMvc.perform(
-            get("/api/v1/intern/feedback")
-                .header("Authorization", "Bearer ${skapAzureJwt()}")
-        ).andExpect(status().isOk).andReturn().response.contentAsString
+        val contentAsString =
+            mockMvc.perform(
+                get("/api/v1/intern/feedback")
+                    .header("Authorization", "Bearer ${skapAzureJwt()}"),
+            ).andExpect(status().isOk).andReturn().response.contentAsString
 
         contentAsString shouldBeEqualTo "{\"content\":[],\"totalPages\":0,\"totalElements\":0,\"size\":10,\"number\":0}"
     }
 
     @Test
     fun `Henter data som annet team`() {
-        val feedbackInn = mapOf(
-            "feedback" to "hade",
-            "app" to "spinnsyn-frontend",
-            "feedbackId" to "spinnsyn refusjon",
-            "indre" to mapOf(
-                "hei" to 5
-            )
-        ).serialisertTilString()
+        val feedbackInn =
+            mapOf(
+                "feedback" to "hade",
+                "app" to "spinnsyn-frontend",
+                "feedbackId" to "spinnsyn refusjon",
+                "indre" to
+                    mapOf(
+                        "hei" to 5,
+                    ),
+            ).serialisertTilString()
 
         feedbackRepository.save(
             FeedbackDbRecord(
                 opprettet = OffsetDateTime.now(),
                 feedbackJson = feedbackInn,
                 team = "team_annet",
-                app = "test app"
-            )
+                app = "test app",
+            ),
         )
 
         feedbackRepository.save(
@@ -126,14 +133,15 @@ class IntegrationTest : FellesTestOppsett() {
                 opprettet = OffsetDateTime.now(),
                 feedbackJson = feedbackInn,
                 team = "flex",
-                app = "other app"
-            )
+                app = "other app",
+            ),
         )
 
-        val contentAsString = mockMvc.perform(
-            get("/api/v1/intern/feedback?team=team_annet")
-                .header("Authorization", "Bearer ${skapAzureJwt()}")
-        ).andExpect(status().isOk).andReturn().response.contentAsString
+        val contentAsString =
+            mockMvc.perform(
+                get("/api/v1/intern/feedback?team=team_annet")
+                    .header("Authorization", "Bearer ${skapAzureJwt()}"),
+            ).andExpect(status().isOk).andReturn().response.contentAsString
 
         val result = objectMapper.readValue<FeedbackPage>(contentAsString)
 
@@ -143,14 +151,16 @@ class IntegrationTest : FellesTestOppsett() {
 
     @Test
     fun `400 blir returnert ved ugyldig feedback`() {
-        val feilmeldingDto = mapOf(
-            "blah" to "hade",
-            "apklp" to "spinnsyn-frontend",
-            "feedbackId" to "spinnsyn refusjon",
-            "indre" to mapOf(
-                "hei" to 5
+        val feilmeldingDto =
+            mapOf(
+                "blah" to "hade",
+                "apklp" to "spinnsyn-frontend",
+                "feedbackId" to "spinnsyn refusjon",
+                "indre" to
+                    mapOf(
+                        "hei" to 5,
+                    ),
             )
-        )
 
         val serialisertTilString = feilmeldingDto.serialisertTilString()
 
@@ -158,7 +168,7 @@ class IntegrationTest : FellesTestOppsett() {
             post("/api/v1/feedback")
                 .header("Authorization", "Bearer ${tokenxToken()}")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(serialisertTilString)
+                .content(serialisertTilString),
         ).andExpect(status().isBadRequest)
     }
 
@@ -166,40 +176,43 @@ class IntegrationTest : FellesTestOppsett() {
     fun `404 når feedback ikke finnes`() {
         mockMvc.perform(
             delete("/api/v1/intern/feedback/12345")
-                .header("Authorization", "Bearer ${skapAzureJwt()}")
+                .header("Authorization", "Bearer ${skapAzureJwt()}"),
         ).andExpect(status().isNotFound)
     }
 
     @Test
     fun `Kan lagre og hente tags`() {
-        val feedbackInn = mapOf(
-            "feedback" to "hade",
-            "app" to "spinnsyn-frontend",
-            "feedbackId" to "spinnsyn refusjon",
-            "indre" to mapOf(
-                "hei" to 5
+        val feedbackInn =
+            mapOf(
+                "feedback" to "hade",
+                "app" to "spinnsyn-frontend",
+                "feedbackId" to "spinnsyn refusjon",
+                "indre" to
+                    mapOf(
+                        "hei" to 5,
+                    ),
             )
-        )
 
         val serialisertTilString = feedbackInn.serialisertTilString()
 
         // Tags først
         mockMvc.perform(
             get("/api/v1/intern/feedback/tags")
-                .header("Authorization", "Bearer ${skapAzureJwt()}")
+                .header("Authorization", "Bearer ${skapAzureJwt()}"),
         ).andExpect(status().isOk).andReturn().response.contentAsString shouldBeEqualTo "[]"
 
         mockMvc.perform(
             post("/api/v1/feedback")
                 .header("Authorization", "Bearer ${tokenxToken()}")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(serialisertTilString)
+                .content(serialisertTilString),
         ).andExpect(status().isAccepted)
 
-        val response = mockMvc.perform(
-            get("/api/v1/intern/feedback")
-                .header("Authorization", "Bearer ${skapAzureJwt()}")
-        ).andExpect(status().isOk).andReturn().response.contentAsString
+        val response =
+            mockMvc.perform(
+                get("/api/v1/intern/feedback")
+                    .header("Authorization", "Bearer ${skapAzureJwt()}"),
+            ).andExpect(status().isOk).andReturn().response.contentAsString
 
         val deserialsert: FeedbackPage = objectMapper.readValue(response)
         deserialsert.content shouldHaveSize 1
@@ -211,19 +224,20 @@ class IntegrationTest : FellesTestOppsett() {
             post("/api/v1/intern/feedback/${first.id}/tags")
                 .header("Authorization", "Bearer ${skapAzureJwt()}")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(TagDto("yrkesskade").serialisertTilString())
+                .content(TagDto("yrkesskade").serialisertTilString()),
         ).andExpect(status().isCreated)
         mockMvc.perform(
             post("/api/v1/intern/feedback/${first.id}/tags")
                 .header("Authorization", "Bearer ${skapAzureJwt()}")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(TagDto("stjerne").serialisertTilString())
+                .content(TagDto("stjerne").serialisertTilString()),
         ).andExpect(status().isCreated)
 
-        val responseNy = mockMvc.perform(
-            get("/api/v1/intern/feedback?fritekst=yrkesskade&stjerne=true")
-                .header("Authorization", "Bearer ${skapAzureJwt()}")
-        ).andExpect(status().isOk).andReturn().response.contentAsString
+        val responseNy =
+            mockMvc.perform(
+                get("/api/v1/intern/feedback?fritekst=yrkesskade&stjerne=true")
+                    .header("Authorization", "Bearer ${skapAzureJwt()}"),
+            ).andExpect(status().isOk).andReturn().response.contentAsString
 
         val deserialserNy: FeedbackPage = objectMapper.readValue(responseNy)
         deserialserNy.content shouldHaveSize 1
@@ -233,19 +247,19 @@ class IntegrationTest : FellesTestOppsett() {
         // Tags etterpå
         mockMvc.perform(
             get("/api/v1/intern/feedback/tags")
-                .header("Authorization", "Bearer ${skapAzureJwt()}")
+                .header("Authorization", "Bearer ${skapAzureJwt()}"),
         ).andExpect(status().isOk).andReturn().response.contentAsString shouldBeEqualTo "[\"yrkesskade\",\"stjerne\"]"
 
         // Slett tag
         mockMvc.perform(
             delete("/api/v1/intern/feedback/${first.id}/tags?tag=yrkesskade")
-                .header("Authorization", "Bearer ${skapAzureJwt()}")
+                .header("Authorization", "Bearer ${skapAzureJwt()}"),
         ).andExpect(status().isNoContent)
 
         // Tags etterpå
         mockMvc.perform(
             get("/api/v1/intern/feedback/tags")
-                .header("Authorization", "Bearer ${skapAzureJwt()}")
+                .header("Authorization", "Bearer ${skapAzureJwt()}"),
         ).andExpect(status().isOk).andReturn().response.contentAsString shouldBeEqualTo "[\"stjerne\"]"
     }
 }
