@@ -233,6 +233,11 @@ class IntegrationTest : FellesTestOppsett() {
                 .content(TagDto("stjerne").serialisertTilString()),
         ).andExpect(status().isCreated)
 
+        mockMvc.perform(
+            get("/api/v1/intern/feedback?fritekst=yrkesskade heihei&stjerne=true")
+                .header("Authorization", "Bearer ${skapAzureJwt()}"),
+        ).andExpect(status().isOk)
+
         val responseNy =
             mockMvc.perform(
                 get("/api/v1/intern/feedback?fritekst=yrkesskade&stjerne=true")

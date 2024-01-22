@@ -38,7 +38,7 @@ class PagingFeedbackRepository(
                             _,
                         ->
                         " AND (feedback_json like :fritekst$index OR tags like :fritekstTags$index )"
-                    }.joinToString()
+                    }.joinToString(" ")
                 } else {
                     ""
                 }
