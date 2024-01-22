@@ -46,7 +46,7 @@ class FlexjarFrontendApi(
                 size = size,
                 team = team,
                 medTekst = medTekst,
-                fritekst = fritekst,
+                fritekst = fritekst?.split(" ") ?: emptyList(),
                 stjerne = stjerne,
             )
 

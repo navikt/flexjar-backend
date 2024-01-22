@@ -17,7 +17,7 @@ class PagingFeedbackRepository(
         size: Int,
         team: String,
         medTekst: Boolean,
-        fritekst: String?,
+        fritekst: List<String>,
         stjerne: Boolean,
     ): Triple<List<FeedbackDbRecord>, Long, Int> {
         val whereClause =
@@ -32,17 +32,23 @@ class PagingFeedbackRepository(
                 } else {
                     ""
                 } +
-                if (fritekst != null) {
-                    " AND (feedback_json like :fritekst OR tags like :fritekstTags )"
+                if (fritekst.isNotEmpty()) {
+                    fritekst.mapIndexed {
+                            index,
+                            _,
+                        ->
+                        " AND (feedback_json like :fritekst$index OR tags like :fritekstTags$index )"
+                    }.joinToString()
                 } else {
                     ""
                 }
 
         val mapSqlParameterSource = MapSqlParameterSource()
         mapSqlParameterSource.addValue("team", team)
-        if (fritekst != null) {
-            mapSqlParameterSource.addValue("fritekst", "%$fritekst%")
-            mapSqlParameterSource.addValue("fritekstTags", "%$fritekst%")
+
+        fritekst.forEachIndexed { index, s ->
+            mapSqlParameterSource.addValue("fritekst$index", "%$s%")
+            mapSqlParameterSource.addValue("fritekstTags$index", "%$s%")
         }
 
         val rowCountSql = "SELECT count(*) AS row_count FROM feedback $whereClause"
