@@ -36,15 +36,7 @@ spec:
     application:
       tenant: nav.no
       enabled: true
-      allowAllUsers: false
-      claims:
-        groups:
-          - id: "5206a646-a99e-4cd5-90e4-758cf7948cc8" #flex
-          - id: "020e6140-6395-430b-9021-65de50e42a0f" #flexjar
-          - id: "3a541678-8965-45c4-844b-486a8b9b94a3" #teamsykmelding
-          - id: "6b8065ba-98e2-4e2d-98d4-f9768c7fbb38" #helsearbeidsgiver
-          - id: "c0227409-2085-4eb2-b487-c4ba270986a3" #tbd
-          - id: "7c0dd32a-1896-4e14-96f6-a7eadc73f5f5" #nais-team-teamsykefravr (isyfo)
+      allowAllUsers: true
   gcp:
     sqlInstances:
       - type: POSTGRES_14
