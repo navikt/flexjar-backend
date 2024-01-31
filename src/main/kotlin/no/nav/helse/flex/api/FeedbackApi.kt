@@ -6,11 +6,10 @@ import no.nav.helse.flex.repository.FeedbackDbRecord
 import no.nav.helse.flex.repository.FeedbackRepository
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.ResponseStatus
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.http.MediaType
+import org.springframework.web.bind.annotation.*
 import java.time.OffsetDateTime
 
 @RestController
@@ -21,13 +20,48 @@ class FeedbackApi(
     @PostMapping("/api/v1/feedback")
     @ResponseStatus(HttpStatus.ACCEPTED)
     @ProtectedWithClaims(issuer = "tokenx")
+    fun lagreFeedbackV1(
+        @RequestBody feedback: String,
+    ) {
+        lagreFeedbackFelles(feedback)
+    }
+
+    data class LagreFeedbackResponse(
+        val id: String,
+    )
+
+    @PostMapping(value = ["/api/v2/feedback"], produces = [MediaType.APPLICATION_JSON_VALUE])
+    @ResponseStatus(HttpStatus.CREATED)
+    @ProtectedWithClaims(issuer = "tokenx")
     fun lagreFeedback(
+        @RequestBody feedback: String,
+    ): LagreFeedbackResponse {
+        val lagretFeedback = lagreFeedbackFelles(feedback)
+        return LagreFeedbackResponse(lagretFeedback.id!!)
+    }
+
+    @PutMapping(value = ["/api/v2/feedback/{id}"], produces = [MediaType.APPLICATION_JSON_VALUE])
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ProtectedWithClaims(issuer = "tokenx")
+    fun oppdaterFeedback(
+        @PathVariable id: String,
         @RequestBody feedback: String,
     ) {
         val clientId = contextHolder.tokenValidationContext.getClaims("tokenx").getStringClaim("client_id")
         val (team, app) = clientId.split(":").takeLast(2)
 
-        feedback.lagre(
+        feedback.oppdater(
+            app = app,
+            team = team,
+            id = id,
+        )
+    }
+
+    private fun lagreFeedbackFelles(feedback: String): FeedbackDbRecord {
+        val clientId = contextHolder.tokenValidationContext.getClaims("tokenx").getStringClaim("client_id")
+        val (team, app) = clientId.split(":").takeLast(2)
+
+        return feedback.lagre(
             app = app,
             team = team,
         )
@@ -51,14 +85,14 @@ class FeedbackApi(
     private fun String.lagre(
         app: String,
         team: String,
-    ) {
+    ): FeedbackDbRecord {
         try {
             tilFeedbackInputDto()
         } catch (e: Exception) {
             throw IllegalArgumentException("Kunne ikke deserialisere feedback", e)
         }
 
-        feedbackRepository.save(
+        return feedbackRepository.save(
             FeedbackDbRecord(
                 opprettet = OffsetDateTime.now(),
                 feedbackJson = this,
@@ -66,6 +100,27 @@ class FeedbackApi(
                 team = team,
             ),
         )
+    }
+
+    private fun String.oppdater(
+        app: String,
+        team: String,
+        id: String,
+    ) {
+        try {
+            tilFeedbackInputDto()
+        } catch (e: Exception) {
+            throw IllegalArgumentException("Kunne ikke deserialisere feedback", e)
+        }
+
+        val feedback =
+            feedbackRepository.findByIdOrNull(id) ?: throw IllegalArgumentException("Fant ikke feedback med id $id")
+
+        if (feedback.app != app || feedback.team != team) {
+            throw IllegalArgumentException("Kan ikke oppdatere feedback som ikke tilhører samme app")
+        }
+
+        feedbackRepository.save(feedback.copy(feedbackJson = this))
     }
 }
 
