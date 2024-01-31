@@ -4,22 +4,18 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.helse.flex.api.FeedbackPage
 import no.nav.helse.flex.api.TagDto
 import no.nav.helse.flex.repository.FeedbackDbRecord
-import no.nav.helse.flex.repository.FeedbackRepository
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeLessOrEqualTo
 import org.amshove.kluent.shouldHaveSize
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import tilFeedbackPage
 import java.time.OffsetDateTime
 
 class IntegrationTest : FellesTestOppsett() {
-    @Autowired
-    private lateinit var feedbackRepository: FeedbackRepository
-
     @AfterEach
     fun slettFraDatabase() {
         feedbackRepository.deleteAll()
@@ -52,13 +48,12 @@ class IntegrationTest : FellesTestOppsett() {
         val lagretFeilmelding = lagredeFeilmeldigner.first()
         lagretFeilmelding.opprettet shouldBeLessOrEqualTo OffsetDateTime.now()
 
-        val response =
+        val deserialsert =
             mockMvc.perform(
                 get("/api/v1/intern/feedback")
                     .header("Authorization", "Bearer ${skapAzureJwt()}"),
-            ).andExpect(status().isOk).andReturn().response.contentAsString
+            ).andExpect(status().isOk).tilFeedbackPage()
 
-        val deserialsert: FeedbackPage = objectMapper.readValue(response)
         deserialsert.content shouldHaveSize 1
         deserialsert.content.first().feedback shouldBeEqualTo feedbackInn
 
@@ -67,24 +62,22 @@ class IntegrationTest : FellesTestOppsett() {
                 .header("Authorization", "Bearer ${skapAzureJwt()}"),
         ).andExpect(status().isNoContent)
 
-        val responsePaginert =
+        val deserialsertPaginert =
             mockMvc.perform(
                 get("/api/v1/intern/feedback")
                     .header("Authorization", "Bearer ${skapAzureJwt()}"),
-            ).andExpect(status().isOk).andReturn().response.contentAsString
+            ).andExpect(status().isOk).tilFeedbackPage()
 
-        val deserialsertPaginert: FeedbackPage = objectMapper.readValue(responsePaginert)
         deserialsertPaginert.content shouldHaveSize 1
         deserialsertPaginert.totalElements shouldBeEqualTo 1
         deserialsertPaginert.totalPages shouldBeEqualTo 1
 
-        val responsePaginert2 =
+        val deserialsertPaginert2 =
             mockMvc.perform(
                 get("/api/v1/intern/feedback?medTekst=true")
                     .header("Authorization", "Bearer ${skapAzureJwt()}"),
-            ).andExpect(status().isOk).andReturn().response.contentAsString
+            ).andExpect(status().isOk).tilFeedbackPage()
 
-        val deserialsertPaginert2: FeedbackPage = objectMapper.readValue(responsePaginert2)
         deserialsertPaginert2.content shouldHaveSize 0
         deserialsertPaginert2.totalElements shouldBeEqualTo 0
         deserialsertPaginert2.totalPages shouldBeEqualTo 0
@@ -137,13 +130,11 @@ class IntegrationTest : FellesTestOppsett() {
             ),
         )
 
-        val contentAsString =
+        val result =
             mockMvc.perform(
                 get("/api/v1/intern/feedback?team=team_annet")
                     .header("Authorization", "Bearer ${skapAzureJwt()}"),
-            ).andExpect(status().isOk).andReturn().response.contentAsString
-
-        val result = objectMapper.readValue<FeedbackPage>(contentAsString)
+            ).andExpect(status().isOk).tilFeedbackPage()
 
         result.content shouldHaveSize 1
         result.content[0].team shouldBeEqualTo "team_annet"

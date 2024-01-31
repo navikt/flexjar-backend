@@ -1,8 +1,10 @@
 package no.nav.helse.flex
 
+import no.nav.helse.flex.repository.FeedbackRepository
 import no.nav.security.mock.oauth2.MockOAuth2Server
 import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback
 import no.nav.security.token.support.spring.test.EnableMockOAuth2Server
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability
@@ -26,6 +28,14 @@ abstract class FellesTestOppsett {
 
     @Autowired
     lateinit var mockMvc: MockMvc
+
+    @Autowired
+    lateinit var feedbackRepository: FeedbackRepository
+
+    @AfterAll
+    fun `Vi resetter databasen`() {
+        feedbackRepository.deleteAll()
+    }
 
     companion object {
         init {
