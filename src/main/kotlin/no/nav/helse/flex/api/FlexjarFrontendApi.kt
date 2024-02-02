@@ -31,6 +31,7 @@ class FlexjarFrontendApi(
         @RequestParam(defaultValue = "10") size: Int,
         @RequestParam(defaultValue = "false") medTekst: Boolean,
         @RequestParam(defaultValue = "false") stjerne: Boolean,
+        @RequestParam app: String?,
         @RequestParam fritekst: String?,
     ): FeedbackPage {
         clientIdValidation.validateClientId(
@@ -45,6 +46,7 @@ class FlexjarFrontendApi(
                 pageInn = page,
                 size = size,
                 team = team,
+                app = app,
                 medTekst = medTekst,
                 fritekst = fritekst?.split(" ") ?: emptyList(),
                 stjerne = stjerne,
@@ -139,6 +141,20 @@ class FlexjarFrontendApi(
         )
 
         return feedbackRepository.finnAlleDistinctTags().map { it?.split(",")?.toSet() ?: emptySet() }.flatten().toSet()
+    }
+
+    @GetMapping("/api/v1/intern/feedback/apps")
+    @ResponseBody
+    @ProtectedWithClaims(issuer = "azureator")
+    fun hentAlleApps(): Set<String> {
+        clientIdValidation.validateClientId(
+            ClientIdValidation.NamespaceAndApp(
+                namespace = "flex",
+                app = "flexjar-frontend",
+            ),
+        )
+
+        return feedbackRepository.finnAlleDistinctApps().map { it?.split(",")?.toSet() ?: emptySet() }.flatten().toSet()
     }
 
     @DeleteMapping("/api/v1/intern/feedback/{id}/tags")
