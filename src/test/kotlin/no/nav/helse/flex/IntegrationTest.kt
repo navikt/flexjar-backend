@@ -62,30 +62,53 @@ class IntegrationTest : FellesTestOppsett() {
                 .header("Authorization", "Bearer ${skapAzureJwt()}"),
         ).andExpect(status().isNoContent)
 
-        val deserialsertPaginert =
-            mockMvc.perform(
-                get("/api/v1/intern/feedback")
-                    .header("Authorization", "Bearer ${skapAzureJwt()}"),
-            ).andExpect(status().isOk).tilFeedbackPage()
+        mockMvc.perform(
+            get("/api/v1/intern/feedback")
+                .header("Authorization", "Bearer ${skapAzureJwt()}"),
+        ).andExpect(status().isOk).tilFeedbackPage().also {
+            it.content shouldHaveSize 1
+            it.totalElements shouldBeEqualTo 1
+            it.totalPages shouldBeEqualTo 1
+        }
 
-        deserialsertPaginert.content shouldHaveSize 1
-        deserialsertPaginert.totalElements shouldBeEqualTo 1
-        deserialsertPaginert.totalPages shouldBeEqualTo 1
-
-        val deserialsertPaginert2 =
-            mockMvc.perform(
-                get("/api/v1/intern/feedback?medTekst=true")
-                    .header("Authorization", "Bearer ${skapAzureJwt()}"),
-            ).andExpect(status().isOk).tilFeedbackPage()
-
-        deserialsertPaginert2.content shouldHaveSize 0
-        deserialsertPaginert2.totalElements shouldBeEqualTo 0
-        deserialsertPaginert2.totalPages shouldBeEqualTo 0
+        mockMvc.perform(
+            get("/api/v1/intern/feedback?medTekst=true")
+                .header("Authorization", "Bearer ${skapAzureJwt()}"),
+        ).andExpect(status().isOk).tilFeedbackPage().also {
+            it.content shouldHaveSize 0
+            it.totalElements shouldBeEqualTo 0
+            it.totalPages shouldBeEqualTo 0
+        }
 
         mockMvc.perform(
             get("/api/v1/intern/feedback?medTekst=true&fritekst=sdfsdf")
                 .header("Authorization", "Bearer ${skapAzureJwt()}"),
         ).andExpect(status().isOk).andReturn().response.contentAsString
+
+        // Kan hente apps
+        mockMvc.perform(
+            get("/api/v1/intern/feedback/apps")
+                .header("Authorization", "Bearer ${skapAzureJwt()}"),
+        ).andExpect(status().isOk).andReturn().response.contentAsString shouldBeEqualTo "[\"spinnsyn-frontend\"]"
+
+        // Kan filtrere på app
+        mockMvc.perform(
+            get("/api/v1/intern/feedback?app=spinnsyn-frontend")
+                .header("Authorization", "Bearer ${skapAzureJwt()}"),
+        ).andExpect(status().isOk).tilFeedbackPage().also {
+            it.content shouldHaveSize 1
+            it.totalElements shouldBeEqualTo 1
+            it.totalPages shouldBeEqualTo 1
+        }
+
+        mockMvc.perform(
+            get("/api/v1/intern/feedback?app=facebook-frontend")
+                .header("Authorization", "Bearer ${skapAzureJwt()}"),
+        ).andExpect(status().isOk).tilFeedbackPage().also {
+            it.content shouldHaveSize 0
+            it.totalElements shouldBeEqualTo 0
+            it.totalPages shouldBeEqualTo 0
+        }
     }
 
     @Test

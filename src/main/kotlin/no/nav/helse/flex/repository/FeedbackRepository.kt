@@ -11,6 +11,9 @@ import java.time.OffsetDateTime
 interface FeedbackRepository : CrudRepository<FeedbackDbRecord, String> {
     @Query("SELECT DISTINCT f.tags FROM feedback f")
     fun finnAlleDistinctTags(): List<String?>
+
+    @Query("SELECT DISTINCT f.app FROM feedback f")
+    fun finnAlleDistinctApps(): List<String?>
 }
 
 @Table("feedback")

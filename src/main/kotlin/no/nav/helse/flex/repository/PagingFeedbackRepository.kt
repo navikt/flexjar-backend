@@ -17,6 +17,7 @@ class PagingFeedbackRepository(
         size: Int,
         team: String,
         medTekst: Boolean,
+        app: String?,
         fritekst: List<String>,
         stjerne: Boolean,
     ): Triple<List<FeedbackDbRecord>, Long, Int> {
@@ -29,6 +30,11 @@ class PagingFeedbackRepository(
                 } +
                 if (stjerne) {
                     " AND tags like '%stjerne'"
+                } else {
+                    ""
+                } +
+                if (app != null) {
+                    " AND app = :app"
                 } else {
                     ""
                 } +
@@ -49,6 +55,9 @@ class PagingFeedbackRepository(
         fritekst.forEachIndexed { index, s ->
             mapSqlParameterSource.addValue("fritekst$index", "%$s%")
             mapSqlParameterSource.addValue("fritekstTags$index", "%$s%")
+        }
+        if (app != null) {
+            mapSqlParameterSource.addValue("app", app)
         }
 
         val rowCountSql = "SELECT count(*) AS row_count FROM feedback $whereClause"
