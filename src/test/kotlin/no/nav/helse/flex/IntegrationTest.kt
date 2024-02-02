@@ -85,11 +85,6 @@ class IntegrationTest : FellesTestOppsett() {
                 .header("Authorization", "Bearer ${skapAzureJwt()}"),
         ).andExpect(status().isOk).andReturn().response.contentAsString
 
-        // Kan hente apps
-        mockMvc.perform(
-            get("/api/v1/intern/feedback/apps")
-                .header("Authorization", "Bearer ${skapAzureJwt()}"),
-        ).andExpect(status().isOk).andReturn().response.contentAsString shouldBeEqualTo "[\"spinnsyn-frontend\"]"
 
         // Kan filtrere på app
         mockMvc.perform(
@@ -120,6 +115,24 @@ class IntegrationTest : FellesTestOppsett() {
             ).andExpect(status().isOk).andReturn().response.contentAsString
 
         contentAsString shouldBeEqualTo "{\"content\":[],\"totalPages\":0,\"totalElements\":0,\"size\":10,\"number\":0}"
+    }
+
+    @Test
+    fun `Henter alle teams og apps`() {
+        val contentAsString =
+            mockMvc.perform(
+                get("/api/v1/intern/feedback")
+                    .header("Authorization", "Bearer ${skapAzureJwt()}"),
+            ).andExpect(status().isOk).andReturn().response.contentAsString
+
+        contentAsString shouldBeEqualTo "{\"content\":[],\"totalPages\":0,\"totalElements\":0,\"size\":10,\"number\":0}"
+
+        // Kan hente apps
+        mockMvc.perform(
+            get("/api/v1/intern/feedback/teams")
+                .header("Authorization", "Bearer ${skapAzureJwt()}"),
+        ).andExpect(status().isOk).andReturn().response.contentAsString shouldBeEqualTo "[\"spinnsyn-frontend\"]"
+
     }
 
     @Test
