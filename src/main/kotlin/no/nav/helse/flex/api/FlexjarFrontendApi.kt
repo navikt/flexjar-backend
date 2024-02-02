@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*
 import java.time.OffsetDateTime
 import java.util.*
 import kotlin.NoSuchElementException
+import kotlin.collections.HashMap
 import kotlin.math.ceil
 
 @RestController
@@ -143,10 +144,10 @@ class FlexjarFrontendApi(
         return feedbackRepository.finnAlleDistinctTags().map { it?.split(",")?.toSet() ?: emptySet() }.flatten().toSet()
     }
 
-    @GetMapping("/api/v1/intern/feedback/apps")
+    @GetMapping("/api/v1/intern/feedback/teams")
     @ResponseBody
     @ProtectedWithClaims(issuer = "azureator")
-    fun hentAlleApps(): Set<String> {
+    fun hentAlleTeamsOgApps(): Map<String, Set<String>> {
         clientIdValidation.validateClientId(
             ClientIdValidation.NamespaceAndApp(
                 namespace = "flex",
@@ -154,7 +155,17 @@ class FlexjarFrontendApi(
             ),
         )
 
-        return feedbackRepository.finnAlleDistinctApps().map { it?.split(",")?.toSet() ?: emptySet() }.flatten().toSet()
+        val teamsOgApps = feedbackRepository.finnAlleDistinctAppsTeams()
+        val res = HashMap<String, HashSet<String>>()
+        teamsOgApps.forEach {
+            res[it.team] = HashSet<String>()
+        }
+        teamsOgApps.forEach {
+            if (it.app != null) {
+                res[it.team]!!.add(it.app)
+            }
+        }
+        return res
     }
 
     @DeleteMapping("/api/v1/intern/feedback/{id}/tags")

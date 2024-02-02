@@ -12,8 +12,8 @@ interface FeedbackRepository : CrudRepository<FeedbackDbRecord, String> {
     @Query("SELECT DISTINCT f.tags FROM feedback f")
     fun finnAlleDistinctTags(): List<String?>
 
-    @Query("SELECT DISTINCT f.app FROM feedback f")
-    fun finnAlleDistinctApps(): List<String?>
+    @Query("SELECT DISTINCT f.team, f.app  FROM feedback f")
+    fun finnAlleDistinctAppsTeams(): List<TeamApp>
 }
 
 @Table("feedback")
@@ -25,4 +25,9 @@ data class FeedbackDbRecord(
     val team: String,
     val app: String? = null,
     val tags: String? = null,
+)
+
+data class TeamApp(
+    val team: String,
+    val app: String? = null,
 )
