@@ -85,7 +85,6 @@ class IntegrationTest : FellesTestOppsett() {
                 .header("Authorization", "Bearer ${skapAzureJwt()}"),
         ).andExpect(status().isOk).andReturn().response.contentAsString
 
-
         // Kan filtrere på app
         mockMvc.perform(
             get("/api/v1/intern/feedback?app=spinnsyn-frontend")
@@ -119,20 +118,44 @@ class IntegrationTest : FellesTestOppsett() {
 
     @Test
     fun `Henter alle teams og apps`() {
-        val contentAsString =
-            mockMvc.perform(
-                get("/api/v1/intern/feedback")
-                    .header("Authorization", "Bearer ${skapAzureJwt()}"),
-            ).andExpect(status().isOk).andReturn().response.contentAsString
+        val feedbackInn =
+            mapOf(
+                "feedback" to "hade",
+                "app" to "spinnsyn-dsfsdfsdf",
+                "feedbackId" to "spinnsyn refusjon",
+                "indre" to
+                    mapOf(
+                        "hei" to 5,
+                    ),
+            ).serialisertTilString()
 
-        contentAsString shouldBeEqualTo "{\"content\":[],\"totalPages\":0,\"totalElements\":0,\"size\":10,\"number\":0}"
+        mockMvc.perform(
+            post("/api/v1/feedback")
+                .header("Authorization", "Bearer ${tokenxToken()}")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(feedbackInn),
+        ).andExpect(status().isAccepted)
+
+        mockMvc.perform(
+            post("/api/v1/feedback")
+                .header("Authorization", "Bearer ${tokenxToken(clientId = "dev-gcp:flex:sykepengesoknad")}")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(feedbackInn),
+        ).andExpect(status().isAccepted)
+
+        mockMvc.perform(
+            post("/api/v1/feedback")
+                .header("Authorization", "Bearer ${tokenxToken(clientId = "dev-gcp:team-sykmelding:dine-sykmeldte")}")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(feedbackInn),
+        ).andExpect(status().isAccepted)
 
         // Kan hente apps
         mockMvc.perform(
             get("/api/v1/intern/feedback/teams")
                 .header("Authorization", "Bearer ${skapAzureJwt()}"),
-        ).andExpect(status().isOk).andReturn().response.contentAsString shouldBeEqualTo "[\"spinnsyn-frontend\"]"
-
+        ).andExpect(status().isOk).andReturn().response.contentAsString shouldBeEqualTo
+            "{\"team-sykmelding\":[\"dine-sykmeldte\"],\"flex\":[\"sykepengesoknad\",\"spinnsyn-frontend\"]}"
     }
 
     @Test

@@ -6,7 +6,6 @@ import no.nav.helse.flex.objectMapper
 import no.nav.helse.flex.repository.FeedbackDbRecord
 import no.nav.helse.flex.repository.FeedbackRepository
 import no.nav.helse.flex.repository.PagingFeedbackRepository
-import no.nav.helse.flex.repository.TeamApp
 import no.nav.helse.flex.serialisertTilString
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.http.HttpStatus
@@ -162,8 +161,9 @@ class FlexjarFrontendApi(
             res[it.team] = HashSet<String>()
         }
         teamsOgApps.forEach {
-            if(it.app != null)
-            res[it.team]!!.add(it.app)
+            if (it.app != null) {
+                res[it.team]!!.add(it.app)
+            }
         }
         return res
     }

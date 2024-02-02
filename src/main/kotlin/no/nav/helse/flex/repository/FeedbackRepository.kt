@@ -27,7 +27,6 @@ data class FeedbackDbRecord(
     val tags: String? = null,
 )
 
-
 data class TeamApp(
     val team: String,
     val app: String? = null,
