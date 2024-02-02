@@ -211,7 +211,12 @@ class FlexjarFrontendApi(
 
 fun FeedbackDbRecord.toDto(): FeedbackDto {
     return FeedbackDto(
-        feedback = objectMapper.readValue(this.feedbackJson),
+        feedback =
+            objectMapper.readValue<HashMap<String, Any>>(this.feedbackJson).also {
+                if (this.app != null) {
+                    it["app"] = this.app
+                }
+            },
         opprettet = this.opprettet,
         id = this.id!!,
         team = this.team,
