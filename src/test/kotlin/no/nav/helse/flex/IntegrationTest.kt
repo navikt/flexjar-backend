@@ -26,7 +26,6 @@ class IntegrationTest : FellesTestOppsett() {
         val feedbackInn =
             mapOf(
                 "feedback" to "hade",
-                "app" to "spinnsyn-frontend",
                 "feedbackId" to "spinnsyn refusjon",
                 "indre" to
                     mapOf(
@@ -55,7 +54,9 @@ class IntegrationTest : FellesTestOppsett() {
             ).andExpect(status().isOk).tilFeedbackPage()
 
         deserialsert.content shouldHaveSize 1
-        deserialsert.content.first().feedback shouldBeEqualTo feedbackInn
+        deserialsert.content.first().feedback.get("app") shouldBeEqualTo "spinnsyn-frontend"
+        val feedbackUtenApp = deserialsert.content.first().feedback.toMutableMap().also { it.remove("app") }
+        feedbackUtenApp shouldBeEqualTo feedbackInn
 
         mockMvc.perform(
             delete("/api/v1/intern/feedback/${deserialsert.content.first().id}")
@@ -204,8 +205,7 @@ class IntegrationTest : FellesTestOppsett() {
         val feilmeldingDto =
             mapOf(
                 "blah" to "hade",
-                "apklp" to "spinnsyn-frontend",
-                "feedbackId" to "spinnsyn refusjon",
+                "feedbasdfsdfckId" to "spinnsyn refusjon",
                 "indre" to
                     mapOf(
                         "hei" to 5,
