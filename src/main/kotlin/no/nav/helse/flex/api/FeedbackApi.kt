@@ -47,7 +47,7 @@ class FeedbackApi(
         @PathVariable id: String,
         @RequestBody feedback: String,
     ) {
-        val clientId = contextHolder.tokenValidationContext.getClaims("tokenx").getStringClaim("client_id")
+        val clientId = contextHolder.getTokenValidationContext().getClaims("tokenx").getStringClaim("client_id")
         val (team, app) = clientId.split(":").takeLast(2)
 
         feedback.oppdater(
@@ -58,7 +58,7 @@ class FeedbackApi(
     }
 
     private fun lagreFeedbackFelles(feedback: String): FeedbackDbRecord {
-        val clientId = contextHolder.tokenValidationContext.getClaims("tokenx").getStringClaim("client_id")
+        val clientId = contextHolder.getTokenValidationContext().getClaims("tokenx").getStringClaim("client_id")
         val (team, app) = clientId.split(":").takeLast(2)
 
         return feedback.lagre(
@@ -73,7 +73,7 @@ class FeedbackApi(
     fun lagreFeedbackAzure(
         @RequestBody feedback: String,
     ) {
-        val azpName = contextHolder.tokenValidationContext.getClaims("azureator").getStringClaim("azp_name")
+        val azpName = contextHolder.getTokenValidationContext().getClaims("azureator").getStringClaim("azp_name")
         val (team, app) = azpName.split(":").takeLast(2)
 
         feedback.lagre(
