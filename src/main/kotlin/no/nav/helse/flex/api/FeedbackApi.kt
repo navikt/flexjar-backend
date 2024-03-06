@@ -57,6 +57,40 @@ class FeedbackApi(
         )
     }
 
+    @PostMapping(value = ["/api/azure/v2/feedback"], produces = [MediaType.APPLICATION_JSON_VALUE])
+    @ResponseStatus(HttpStatus.CREATED)
+    @ProtectedWithClaims(issuer = "azureator")
+    fun lagreFeedbackAzurev2(
+        @RequestBody feedback: String,
+    ): LagreFeedbackResponse {
+        val azpName = contextHolder.getTokenValidationContext().getClaims("azureator").getStringClaim("azp_name")
+        val (team, app) = azpName.split(":").takeLast(2)
+
+        val lagretFeedback =
+            feedback.lagre(
+                app = app,
+                team = team,
+            )
+        return LagreFeedbackResponse(lagretFeedback.id!!)
+    }
+
+    @PutMapping(value = ["/api/azure/v2/feedback/{id}"], produces = [MediaType.APPLICATION_JSON_VALUE])
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ProtectedWithClaims(issuer = "azureator")
+    fun oppdaterFeedbackAzurev2(
+        @PathVariable id: String,
+        @RequestBody feedback: String,
+    ) {
+        val azpName = contextHolder.getTokenValidationContext().getClaims("azureator").getStringClaim("azp_name")
+        val (team, app) = azpName.split(":").takeLast(2)
+
+        feedback.oppdater(
+            app = app,
+            team = team,
+            id = id,
+        )
+    }
+
     private fun lagreFeedbackFelles(feedback: String): FeedbackDbRecord {
         val clientId = contextHolder.getTokenValidationContext().getClaims("tokenx").getStringClaim("client_id")
         val (team, app) = clientId.split(":").takeLast(2)
