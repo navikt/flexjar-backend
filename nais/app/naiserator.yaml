@@ -73,6 +73,8 @@ spec:
           namespace: helsearbeidsgiver
         - application: flexjar-proxy
           namespace: tbd
+        - application: speil
+          namespace: tbd
         - application: syfomodiaperson
           namespace: teamsykefravr
         - application: syfooversikt
