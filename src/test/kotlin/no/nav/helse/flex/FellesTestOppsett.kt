@@ -99,19 +99,23 @@ fun MockOAuth2Server.token(
 }
 
 fun FellesTestOppsett.buildAzureClaimSet(
-    subject: String,
+    clientId: String,
     issuer: String = "azureator",
+    azpName: String,
     audience: String = "flexjar-backend-client-id",
 ): String {
     val claims = HashMap<String, String>()
-
+    claims.put("azp_name", azpName)
     return server.token(
-        subject = "Vi sjekker azp",
+        subject = "whatever",
         issuerId = issuer,
-        clientId = subject,
+        clientId = clientId,
         audience = audience,
         claims = claims,
     )
 }
 
-fun FellesTestOppsett.skapAzureJwt(subject: String = "flexjar-frontend-client-id") = buildAzureClaimSet(subject = subject)
+fun FellesTestOppsett.skapAzureJwt(
+    azpName: String = "dev-gcp:flex:flexjar-frontend",
+    clientId: String = "flexjar-frontend-client-id",
+) = buildAzureClaimSet(clientId = clientId, azpName = azpName)
