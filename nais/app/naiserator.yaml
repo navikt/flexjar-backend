@@ -50,6 +50,7 @@ spec:
           - name: flexjar-backend-db
             envVarPrefix: DATABASE
             users:
+              - name: bigquery-dataprodukt
               - name: bigquery-datastream
         maintenance:
           day: 2
