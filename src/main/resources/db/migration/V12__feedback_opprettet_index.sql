@@ -1,0 +1,1 @@
+CREATE INDEX feedback_opprettet_idx ON feedback (opprettet);
