@@ -29,7 +29,7 @@ class PagingFeedbackRepository(
                     ""
                 } +
                 if (stjerne) {
-                    " AND tags like '%stjerne'"
+                    " AND tags like '%stjerne%'"
                 } else {
                     ""
                 } +
