@@ -79,6 +79,8 @@ spec:
           namespace: teamsykefravr
         - application: syfooversikt
           namespace: teamsykefravr
+        - application: meroppfolging-frontend
+          namespace: team-esyfo
   env:
   {{#each env}}
      - name: {{@key}}
