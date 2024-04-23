@@ -3,7 +3,7 @@ nais.cluster: test
 spring:
   main.banner-mode: 'off'
   profiles:
-    active: test
+    active: default
   flyway:
     enabled: true
   datasource:

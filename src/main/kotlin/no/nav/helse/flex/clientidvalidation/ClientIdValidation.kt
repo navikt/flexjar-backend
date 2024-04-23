@@ -8,22 +8,22 @@ import no.nav.helse.flex.logger
 import no.nav.helse.flex.objectMapper
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.annotation.Profile
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 
 @Component
-class ClientIdValidation(
+@Profile("default")
+class ClientIdValidationImpl(
     private val tokenValidationContextHolder: TokenValidationContextHolder,
     @Value("\${AZURE_APP_PRE_AUTHORIZED_APPS}") private val azureAppPreAuthorizedApps: String,
-) {
+) : ClientIdValidation {
     private val log = logger()
     private val allowedClientIds: List<PreAuthorizedClient> = objectMapper.readValue(azureAppPreAuthorizedApps)
 
-    data class NamespaceAndApp(val namespace: String, val app: String)
+    override fun validateClientId(app: NamespaceAndApp) = validateClientId(listOf(app))
 
-    fun validateClientId(app: NamespaceAndApp) = validateClientId(listOf(app))
-
-    fun validateClientId(apps: List<NamespaceAndApp>) {
+    override fun validateClientId(apps: List<NamespaceAndApp>) {
         val clientIds =
             allowedClientIds
                 .filter { apps.contains(it.tilNamespaceAndApp()) }
@@ -59,3 +59,11 @@ private fun PreAuthorizedClient.tilNamespaceAndApp(): NamespaceAndApp {
 }
 
 data class PreAuthorizedClient(val name: String, val clientId: String)
+
+interface ClientIdValidation {
+    data class NamespaceAndApp(val namespace: String, val app: String)
+
+    fun validateClientId(app: NamespaceAndApp)
+
+    fun validateClientId(apps: List<NamespaceAndApp>)
+}
