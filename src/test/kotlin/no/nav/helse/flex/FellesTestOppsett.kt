@@ -1,6 +1,7 @@
 package no.nav.helse.flex
 
 import no.nav.helse.flex.repository.FeedbackRepository
+import no.nav.helse.flex.testoppsett.startPostgresContainer
 import no.nav.security.mock.oauth2.MockOAuth2Server
 import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback
 import no.nav.security.token.support.spring.test.EnableMockOAuth2Server
@@ -12,10 +13,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrint
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.web.servlet.MockMvc
-import org.testcontainers.containers.PostgreSQLContainer
 import java.util.*
-
-class PostgreSQLContainer14 : PostgreSQLContainer<PostgreSQLContainer14>("postgres:14-alpine")
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @AutoConfigureObservability
@@ -39,15 +37,7 @@ abstract class FellesTestOppsett {
 
     companion object {
         init {
-            PostgreSQLContainer14().apply {
-                // Cloud SQL har wal_level = 'logical' på grunn av flagget cloudsql.logical_decoding i
-                // naiserator.yaml. Vi må sette det samme lokalt for at flyway migrering skal fungere.
-                withCommand("postgres", "-c", "wal_level=logical")
-                start()
-                System.setProperty("spring.datasource.url", "$jdbcUrl&reWriteBatchedInserts=true")
-                System.setProperty("spring.datasource.username", username)
-                System.setProperty("spring.datasource.password", password)
-            }
+            startPostgresContainer()
         }
     }
 
@@ -98,7 +88,7 @@ fun MockOAuth2Server.token(
     ).serialize()
 }
 
-fun FellesTestOppsett.buildAzureClaimSet(
+fun MockOAuth2Server.buildAzureClaimSet(
     clientId: String,
     issuer: String = "azureator",
     azpName: String,
@@ -106,7 +96,7 @@ fun FellesTestOppsett.buildAzureClaimSet(
 ): String {
     val claims = HashMap<String, String>()
     claims.put("azp_name", azpName)
-    return server.token(
+    return token(
         subject = "whatever",
         issuerId = issuer,
         clientId = clientId,
@@ -116,6 +106,11 @@ fun FellesTestOppsett.buildAzureClaimSet(
 }
 
 fun FellesTestOppsett.skapAzureJwt(
+    azpName: String = "dev-gcp:flex:flexjar-frontend",
+    clientId: String = "flexjar-frontend-client-id",
+) = server.skapAzureJwt(clientId = clientId, azpName = azpName)
+
+fun MockOAuth2Server.skapAzureJwt(
     azpName: String = "dev-gcp:flex:flexjar-frontend",
     clientId: String = "flexjar-frontend-client-id",
 ) = buildAzureClaimSet(clientId = clientId, azpName = azpName)

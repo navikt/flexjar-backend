@@ -4,26 +4,24 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.helse.flex.api.AbstractApiError
 import no.nav.helse.flex.api.LogLevel
 import no.nav.helse.flex.clientidvalidation.ClientIdValidation.NamespaceAndApp
-import no.nav.helse.flex.logger
 import no.nav.helse.flex.objectMapper
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.context.annotation.Profile
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 
 @Component
-@Profile("default")
-class ClientIdValidationImpl(
+class ClientIdValidation(
     private val tokenValidationContextHolder: TokenValidationContextHolder,
     @Value("\${AZURE_APP_PRE_AUTHORIZED_APPS}") private val azureAppPreAuthorizedApps: String,
-) : ClientIdValidation {
-    private val log = logger()
+) {
     private val allowedClientIds: List<PreAuthorizedClient> = objectMapper.readValue(azureAppPreAuthorizedApps)
 
-    override fun validateClientId(app: NamespaceAndApp) = validateClientId(listOf(app))
+    data class NamespaceAndApp(val namespace: String, val app: String)
 
-    override fun validateClientId(apps: List<NamespaceAndApp>) {
+    fun validateClientId(app: NamespaceAndApp) = validateClientId(listOf(app))
+
+    fun validateClientId(apps: List<NamespaceAndApp>) {
         val clientIds =
             allowedClientIds
                 .filter { apps.contains(it.tilNamespaceAndApp()) }
@@ -59,11 +57,3 @@ private fun PreAuthorizedClient.tilNamespaceAndApp(): NamespaceAndApp {
 }
 
 data class PreAuthorizedClient(val name: String, val clientId: String)
-
-interface ClientIdValidation {
-    data class NamespaceAndApp(val namespace: String, val app: String)
-
-    fun validateClientId(app: NamespaceAndApp)
-
-    fun validateClientId(apps: List<NamespaceAndApp>)
-}
