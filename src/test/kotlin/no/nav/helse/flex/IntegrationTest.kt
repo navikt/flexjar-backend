@@ -305,17 +305,14 @@ class IntegrationTest : FellesTestOppsett() {
                 .header("Authorization", "Bearer ${skapAzureJwt()}"),
         ).andExpect(status().isOk).andReturn().response.contentAsString shouldBeEqualTo "[\"yrkesskade\",\"stjerne\"]"
 
-
         // Tags har riktig lengde
-        val responseMedEnFeedback = mockMvc.perform(
-            get("/api/v1/intern/feedback?tags=yrkesskade")
-                .header("Authorization", "Bearer ${skapAzureJwt()}"),
-        ).andExpect(status().isOk).andReturn().response.contentAsString
+        val responseMedEnFeedback =
+            mockMvc.perform(
+                get("/api/v1/intern/feedback?tags=yrkesskade")
+                    .header("Authorization", "Bearer ${skapAzureJwt()}"),
+            ).andExpect(status().isOk).andReturn().response.contentAsString
         val deserialsertResponseMedEnFeedback: FeedbackPage = objectMapper.readValue(responseMedEnFeedback)
         deserialsertResponseMedEnFeedback.content shouldHaveSize 1
-
-
-
 
         // Slett tag
         mockMvc.perform(
@@ -323,14 +320,14 @@ class IntegrationTest : FellesTestOppsett() {
                 .header("Authorization", "Bearer ${skapAzureJwt()}"),
         ).andExpect(status().isNoContent)
 
-          // Tags har riktig lengde etter sletting
-        val responseMedNullFeedback = mockMvc.perform(
-            get("/api/v1/intern/feedback?tags=yrkesskade")
-                .header("Authorization", "Bearer ${skapAzureJwt()}"),
-        ).andExpect(status().isOk).andReturn().response.contentAsString
+        // Tags har riktig lengde etter sletting
+        val responseMedNullFeedback =
+            mockMvc.perform(
+                get("/api/v1/intern/feedback?tags=yrkesskade")
+                    .header("Authorization", "Bearer ${skapAzureJwt()}"),
+            ).andExpect(status().isOk).andReturn().response.contentAsString
         val deserialsertResponseMedNullFeedback: FeedbackPage = objectMapper.readValue(responseMedNullFeedback)
         deserialsertResponseMedNullFeedback.content shouldHaveSize 0
-
 
         // Tags etterpå
         mockMvc.perform(
@@ -338,12 +335,10 @@ class IntegrationTest : FellesTestOppsett() {
                 .header("Authorization", "Bearer ${skapAzureJwt()}"),
         ).andExpect(status().isOk).andReturn().response.contentAsString shouldBeEqualTo "[\"stjerne\"]"
 
-
         // Fungerer å se etter tag
         mockMvc.perform(
             get("/api/v1/intern/feedback?tags=yrkesskade")
                 .header("Authorization", "Bearer ${skapAzureJwt()}"),
         ).andExpect(status().isOk)
-
     }
 }

@@ -73,7 +73,6 @@ class PagingFeedbackRepository(
             mapSqlParameterSource.addValue("tags$index", "%$s%")
         }
 
-
         if (app != null) {
             mapSqlParameterSource.addValue("app", app)
         }
