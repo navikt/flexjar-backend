@@ -20,6 +20,7 @@ class PagingFeedbackRepository(
         app: String?,
         fritekst: List<String>,
         stjerne: Boolean,
+        tags: List<String>,
     ): Triple<List<FeedbackDbRecord>, Long, Int> {
         val whereClause =
             "WHERE team = :team" +
@@ -30,6 +31,17 @@ class PagingFeedbackRepository(
                 } +
                 if (stjerne) {
                     " AND tags like '%stjerne%'"
+                } else {
+                    ""
+                } +
+
+                if (tags.isNotEmpty()) {
+                    tags.mapIndexed {
+                            index,
+                            _,
+                        ->
+                        " AND tags like :tags$index"
+                    }.joinToString(" ")
                 } else {
                     ""
                 } +
@@ -56,6 +68,12 @@ class PagingFeedbackRepository(
             mapSqlParameterSource.addValue("fritekst$index", "%$s%")
             mapSqlParameterSource.addValue("fritekstTags$index", "%$s%")
         }
+
+        tags.forEachIndexed { index, s ->
+            mapSqlParameterSource.addValue("tags$index", "%$s%")
+        }
+
+
         if (app != null) {
             mapSqlParameterSource.addValue("app", app)
         }
