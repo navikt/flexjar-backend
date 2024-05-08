@@ -52,7 +52,6 @@ class FlexjarFrontendApi(
                 fritekst = fritekst?.split(" ") ?: emptyList(),
                 stjerne = stjerne,
                 tags = tags?.split(",") ?: emptyList(),
-                // todo, we need to make sure there are no commas in tagnames using validation
             )
 
         return FeedbackPage(
