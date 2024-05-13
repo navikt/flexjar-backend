@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.time.OffsetDateTime
 import java.util.*
-import kotlin.NoSuchElementException
 import kotlin.collections.HashMap
 import kotlin.math.ceil
 
@@ -34,6 +33,7 @@ class FlexjarFrontendApi(
         @RequestParam(defaultValue = "false") stjerne: Boolean,
         @RequestParam app: String?,
         @RequestParam fritekst: String?,
+        @RequestParam tags: String?,
     ): FeedbackPage {
         clientIdValidation.validateClientId(
             ClientIdValidation.NamespaceAndApp(
@@ -51,6 +51,7 @@ class FlexjarFrontendApi(
                 medTekst = medTekst,
                 fritekst = fritekst?.split(" ") ?: emptyList(),
                 stjerne = stjerne,
+                tags = tags?.split(",") ?: emptyList(),
             )
 
         return FeedbackPage(
