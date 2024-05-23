@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.HttpMediaTypeNotAcceptableException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
+import org.springframework.web.servlet.resource.NoResourceFoundException
 
 @ControllerAdvice
 class GlobalExceptionHandler {
@@ -33,6 +34,10 @@ class GlobalExceptionHandler {
             is IllegalArgumentException -> {
                 log.error(ex.message, ex)
                 skapResponseEntity(HttpStatus.BAD_REQUEST)
+            }
+            is NoResourceFoundException -> {
+                log.warn(ex.message, ex)
+                skapResponseEntity(HttpStatus.NOT_FOUND)
             }
             is JwtTokenInvalidClaimException -> skapResponseEntity(HttpStatus.UNAUTHORIZED)
             is JwtTokenUnauthorizedException -> skapResponseEntity(HttpStatus.UNAUTHORIZED)
