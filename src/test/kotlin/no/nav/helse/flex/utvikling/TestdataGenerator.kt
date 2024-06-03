@@ -1,3 +1,5 @@
+package no.nav.helse.flex.utvikling
+
 import io.github.serpro69.kfaker.Faker
 import jakarta.annotation.PostConstruct
 import no.nav.helse.flex.repository.FeedbackDbRecord
@@ -5,10 +7,10 @@ import no.nav.helse.flex.repository.FeedbackRepository
 import no.nav.helse.flex.serialisertTilString
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile
-import org.springframework.stereotype.Service
+import org.springframework.stereotype.Component
 import java.time.OffsetDateTime
 
-@Service
+@Component
 @Profile("dev")
 class TestdataGenerator {
     @Autowired
