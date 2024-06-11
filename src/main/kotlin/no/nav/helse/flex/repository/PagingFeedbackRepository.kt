@@ -55,7 +55,7 @@ class PagingFeedbackRepository(
                             index,
                             _,
                         ->
-                        " AND (feedback_json like :fritekst$index OR tags like :fritekstTags$index )"
+                        " AND (feedback_json ilike :fritekst$index OR tags ilike :fritekstTags$index )"
                     }.joinToString(" ")
                 } else {
                     ""
