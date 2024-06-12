@@ -33,4 +33,4 @@ no.nav.security.jwt:
       accepted_audience: flexjar-backend-client-id
 
 
-AZURE_APP_PRE_AUTHORIZED_APPS: "[{\"name\":\"dev-gcp:flex:flexjar-frontend\",\"clientId\":\"flexjar-frontend-client-id\"}]"
+AZURE_APP_PRE_AUTHORIZED_APPS: "[{\"name\":\"dev-gcp:flex:flexjar-frontend\",\"clientId\":\"flexjar-frontend-client-id\"},{\"name\":\"dev-gcp:flex:flexjar-infoskjerm\",\"clientId\":\"flexjar-infoskjerm-client-id\"}]"

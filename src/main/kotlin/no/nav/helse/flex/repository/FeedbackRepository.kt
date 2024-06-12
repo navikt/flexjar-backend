@@ -14,6 +14,9 @@ interface FeedbackRepository : CrudRepository<FeedbackDbRecord, String> {
 
     @Query("SELECT DISTINCT f.team, f.app  FROM feedback f")
     fun finnAlleDistinctAppsTeams(): List<TeamApp>
+
+    @Query("SELECT * FROM feedback f where team=:team and tags like '%infoskjerm%'")
+    fun finnForInfoskjerm(team: String): List<FeedbackDbRecord>
 }
 
 @Table("feedback")

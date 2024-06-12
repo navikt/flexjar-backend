@@ -11,7 +11,6 @@ import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import java.time.OffsetDateTime
 import java.util.*
 import kotlin.collections.HashMap
 import kotlin.math.ceil
@@ -209,40 +208,3 @@ class FlexjarFrontendApi(
         }
     }
 }
-
-fun FeedbackDbRecord.toDto(): FeedbackDto {
-    return FeedbackDto(
-        feedback =
-            objectMapper.readValue<HashMap<String, Any>>(this.feedbackJson).also {
-                if (this.app != null) {
-                    it["app"] = this.app
-                }
-            },
-        opprettet = this.opprettet,
-        id = this.id!!,
-        team = this.team,
-        app = this.app,
-        tags = this.tags?.split(",")?.toSet() ?: emptySet(),
-    )
-}
-
-data class FeedbackDto(
-    val feedback: Map<String, Any>,
-    val opprettet: OffsetDateTime,
-    val id: String,
-    val team: String,
-    val app: String?,
-    val tags: Set<String>,
-)
-
-data class FeedbackPage(
-    val content: List<FeedbackDto>,
-    val totalPages: Int,
-    val totalElements: Int,
-    val size: Int,
-    val number: Int,
-)
-
-data class TagDto(
-    val tag: String,
-)

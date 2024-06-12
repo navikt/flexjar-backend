@@ -63,6 +63,7 @@ spec:
       rules:
         - application: sykepengesoknad
         - application: flexjar-frontend
+        - application: flexjar-infoskjerm
         - application: spinnsyn-frontend
         - application: ditt-sykefravaer
         - application: dinesykmeldte
