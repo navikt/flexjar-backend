@@ -72,8 +72,6 @@ spec:
           namespace: teamsykmelding
         - application: spinntektsmelding-frontend
           namespace: helsearbeidsgiver
-        - application: flexjar-proxy
-          namespace: tbd
         - application: speil
           namespace: tbd
         - application: syfomodiaperson
