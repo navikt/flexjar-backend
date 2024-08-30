@@ -70,6 +70,8 @@ spec:
           namespace: teamsykmelding
         - application: sykmeldinger
           namespace: teamsykmelding
+        - application: syk-dig
+          namespace: teamsykmelding
         - application: spinntektsmelding-frontend
           namespace: helsearbeidsgiver
         - application: speil
