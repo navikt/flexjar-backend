@@ -74,8 +74,6 @@ spec:
         - application: flexjar-infoskjerm
         - application: spinnsyn-frontend
         - application: ditt-sykefravaer
-        - application: dinesykmeldte
-          namespace: teamsykmelding
         - application: sykmeldinger
           namespace: teamsykmelding
         - application: syk-dig
