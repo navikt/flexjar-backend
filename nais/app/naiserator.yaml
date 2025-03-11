@@ -90,6 +90,10 @@ spec:
           namespace: teamsykefravr
         - application: meroppfolging-frontend
           namespace: team-esyfo
+        - application: oppfolgingsplan-frontend
+          namespace: team-esyfo
+        - application: oppfolgingsplan
+          namespace: team-esyfo
   env:
   {{#each env}}
      - name: {{@key}}
