@@ -141,7 +141,11 @@ class FlexjarFrontendApi(
             ),
         )
 
-        return feedbackRepository.finnAlleDistinctTags().map { it?.split(",")?.toSet() ?: emptySet() }.flatten().toSet()
+        return feedbackRepository
+            .finnAlleDistinctTags()
+            .map { it?.split(",")?.toSet() ?: emptySet() }
+            .flatten()
+            .toSet()
     }
 
     @GetMapping("/api/v1/intern/feedback/teams")

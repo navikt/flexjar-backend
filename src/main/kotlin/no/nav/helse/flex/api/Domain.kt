@@ -5,8 +5,8 @@ import no.nav.helse.flex.objectMapper
 import no.nav.helse.flex.repository.FeedbackDbRecord
 import java.time.OffsetDateTime
 
-fun FeedbackDbRecord.toDto(): FeedbackDto {
-    return FeedbackDto(
+fun FeedbackDbRecord.toDto(): FeedbackDto =
+    FeedbackDto(
         feedback =
             objectMapper.readValue<HashMap<String, Any>>(this.feedbackJson).also {
                 if (this.app != null) {
@@ -19,7 +19,6 @@ fun FeedbackDbRecord.toDto(): FeedbackDto {
         app = this.app,
         tags = this.tags?.split(",")?.toSet() ?: emptySet(),
     )
-}
 
 data class FeedbackDto(
     val feedback: Map<String, Any>,

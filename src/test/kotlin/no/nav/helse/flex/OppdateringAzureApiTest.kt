@@ -29,21 +29,28 @@ class OppdateringAzureApiTest : FellesTestOppsett() {
             )
 
         val feedbackResponse =
-            mockMvc.perform(
-                post("/api/azure/v2/feedback")
-                    .header("Authorization", "Bearer ${skapAzureJwt()}")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(feedbackInn.serialisertTilString()),
-            ).andExpect(status().isCreated).tilFeedbackResponse()
+            mockMvc
+                .perform(
+                    post("/api/azure/v2/feedback")
+                        .header("Authorization", "Bearer ${skapAzureJwt()}")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(feedbackInn.serialisertTilString()),
+                ).andExpect(status().isCreated)
+                .tilFeedbackResponse()
 
-        mockMvc.perform(
-            get("/api/v1/intern/feedback")
-                .header("Authorization", "Bearer ${skapAzureJwt()}"),
-        ).andExpect(status().isOk).tilFeedbackPage()
+        mockMvc
+            .perform(
+                get("/api/v1/intern/feedback")
+                    .header("Authorization", "Bearer ${skapAzureJwt()}"),
+            ).andExpect(status().isOk)
+            .tilFeedbackPage()
             .also {
                 it.totalPages shouldBeEqualTo 1
                 it.totalElements shouldBeEqualTo 1
-                it.content.first().feedback["feedback"].shouldBeNull()
+                it.content
+                    .first()
+                    .feedback["feedback"]
+                    .shouldBeNull()
                 it.content.first().id shouldBeEqualTo feedbackResponse.id
             }
 
@@ -52,17 +59,20 @@ class OppdateringAzureApiTest : FellesTestOppsett() {
                 it["feedback"] = "min oppdaterte tekst"
             }
 
-        mockMvc.perform(
-            put("/api/azure/v2/feedback/${feedbackResponse.id}")
-                .header("Authorization", "Bearer ${skapAzureJwt()}")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(oppdatertFeedback.serialisertTilString()),
-        ).andExpect(status().isNoContent)
+        mockMvc
+            .perform(
+                put("/api/azure/v2/feedback/${feedbackResponse.id}")
+                    .header("Authorization", "Bearer ${skapAzureJwt()}")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(oppdatertFeedback.serialisertTilString()),
+            ).andExpect(status().isNoContent)
 
-        mockMvc.perform(
-            get("/api/v1/intern/feedback")
-                .header("Authorization", "Bearer ${skapAzureJwt()}"),
-        ).andExpect(status().isOk).tilFeedbackPage()
+        mockMvc
+            .perform(
+                get("/api/v1/intern/feedback")
+                    .header("Authorization", "Bearer ${skapAzureJwt()}"),
+            ).andExpect(status().isOk)
+            .tilFeedbackPage()
             .also {
                 it.totalPages shouldBeEqualTo 1
                 it.totalElements shouldBeEqualTo 1
@@ -84,18 +94,21 @@ class OppdateringAzureApiTest : FellesTestOppsett() {
             )
 
         val feedbackResponse =
-            mockMvc.perform(
-                post("/api/azure/v2/feedback")
-                    .header("Authorization", "Bearer ${skapAzureJwt(azpName = "dev-gcp:flex:spinnsyn-frontend")}")
+            mockMvc
+                .perform(
+                    post("/api/azure/v2/feedback")
+                        .header("Authorization", "Bearer ${skapAzureJwt(azpName = "dev-gcp:flex:spinnsyn-frontend")}")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(feedbackInn.serialisertTilString()),
+                ).andExpect(status().isCreated)
+                .tilFeedbackResponse()
+
+        mockMvc
+            .perform(
+                put("/api/azure/v2/feedback/${feedbackResponse.id}")
+                    .header("Authorization", "Bearer ${skapAzureJwt(azpName = "dev-gcp:flex:ditt-sykefravaer")}")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(feedbackInn.serialisertTilString()),
-            ).andExpect(status().isCreated).tilFeedbackResponse()
-
-        mockMvc.perform(
-            put("/api/azure/v2/feedback/${feedbackResponse.id}")
-                .header("Authorization", "Bearer ${skapAzureJwt(azpName = "dev-gcp:flex:ditt-sykefravaer")}")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(feedbackInn.serialisertTilString()),
-        ).andExpect(status().isBadRequest)
+            ).andExpect(status().isBadRequest)
     }
 }
