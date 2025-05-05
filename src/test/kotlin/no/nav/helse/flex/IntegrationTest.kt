@@ -176,14 +176,6 @@ class IntegrationTest : FellesTestOppsett() {
                     .content(feedbackInn),
             ).andExpect(status().isAccepted)
 
-        mockMvc
-            .perform(
-                post("/api/v1/feedback")
-                    .header("Authorization", "Bearer ${tokenxToken(clientId = "dev-gcp:team-sykmelding:dine-sykmeldte")}")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(feedbackInn),
-            ).andExpect(status().isAccepted)
-
         // Kan hente apps
         mockMvc
             .perform(
@@ -192,7 +184,7 @@ class IntegrationTest : FellesTestOppsett() {
             ).andExpect(status().isOk)
             .andReturn()
             .response.contentAsString shouldBeEqualTo
-            "{\"team-sykmelding\":[\"dine-sykmeldte\"],\"flex\":[\"sykepengesoknad\",\"spinnsyn-frontend\"]}"
+            "{\"flex\":[\"sykepengesoknad\",\"spinnsyn-frontend\"]}"
     }
 
     @Test
