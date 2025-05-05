@@ -36,12 +36,13 @@ class PagingFeedbackRepository(
                 } +
 
                 if (tags.isNotEmpty()) {
-                    tags.mapIndexed {
+                    tags
+                        .mapIndexed {
                             index,
                             _,
-                        ->
-                        " AND tags like :tags$index"
-                    }.joinToString(" ")
+                            ->
+                            " AND tags like :tags$index"
+                        }.joinToString(" ")
                 } else {
                     ""
                 } +
@@ -51,12 +52,13 @@ class PagingFeedbackRepository(
                     ""
                 } +
                 if (fritekst.isNotEmpty()) {
-                    fritekst.mapIndexed {
+                    fritekst
+                        .mapIndexed {
                             index,
                             _,
-                        ->
-                        " AND (feedback_json ilike :fritekst$index OR tags ilike :fritekstTags$index )"
-                    }.joinToString(" ")
+                            ->
+                            " AND (feedback_json ilike :fritekst$index OR tags ilike :fritekstTags$index )"
+                        }.joinToString(" ")
                 } else {
                     ""
                 }
@@ -111,8 +113,8 @@ class FeedbackDbRecordRowMapper : RowMapper<FeedbackDbRecord> {
     override fun mapRow(
         rs: ResultSet,
         rowNum: Int,
-    ): FeedbackDbRecord {
-        return FeedbackDbRecord(
+    ): FeedbackDbRecord =
+        FeedbackDbRecord(
             id = rs.getString("id"),
             opprettet = rs.getObject("opprettet", OffsetDateTime::class.java),
             feedbackJson = rs.getString("feedback_json"),
@@ -120,5 +122,4 @@ class FeedbackDbRecordRowMapper : RowMapper<FeedbackDbRecord> {
             app = rs.getString("app"),
             tags = rs.getString("tags"),
         )
-    }
 }

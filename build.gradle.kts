@@ -54,6 +54,10 @@ dependencies {
     testImplementation("io.github.serpro69:kotlin-faker:1.16.0")
 }
 
+ktlint {
+    version.set("1.5.0")
+}
+
 kotlin {
     compilerOptions {
         jvmTarget.set(JvmTarget.JVM_21)

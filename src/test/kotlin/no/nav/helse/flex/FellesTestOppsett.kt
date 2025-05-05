@@ -53,19 +53,19 @@ abstract class FellesTestOppsett {
                 "client_id" to clientId,
                 "pid" to fnr,
             ),
-    ): String {
-        return server.issueToken(
-            issuerId,
-            clientId,
-            DefaultOAuth2TokenCallback(
-                issuerId = issuerId,
-                subject = UUID.randomUUID().toString(),
-                audience = listOf(audience),
-                claims = claims,
-                expiry = 3600,
-            ),
-        ).serialize()
-    }
+    ): String =
+        server
+            .issueToken(
+                issuerId,
+                clientId,
+                DefaultOAuth2TokenCallback(
+                    issuerId = issuerId,
+                    subject = UUID.randomUUID().toString(),
+                    audience = listOf(audience),
+                    claims = claims,
+                    expiry = 3600,
+                ),
+            ).serialize()
 }
 
 fun MockOAuth2Server.token(
@@ -74,19 +74,19 @@ fun MockOAuth2Server.token(
     clientId: String = UUID.randomUUID().toString(),
     audience: String,
     claims: Map<String, Any> = mapOf("acr" to "idporten-loa-high"),
-): String {
-    return this.issueToken(
-        issuerId,
-        clientId,
-        DefaultOAuth2TokenCallback(
-            issuerId = issuerId,
-            subject = subject,
-            audience = listOf(audience),
-            claims = claims,
-            expiry = 3600,
-        ),
-    ).serialize()
-}
+): String =
+    this
+        .issueToken(
+            issuerId,
+            clientId,
+            DefaultOAuth2TokenCallback(
+                issuerId = issuerId,
+                subject = subject,
+                audience = listOf(audience),
+                claims = claims,
+                expiry = 3600,
+            ),
+        ).serialize()
 
 fun MockOAuth2Server.buildAzureClaimSet(
     clientId: String,
