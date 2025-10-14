@@ -90,7 +90,9 @@ spec:
           namespace: team-esyfo
         - application: oppfolgingsplan-frontend
           namespace: team-esyfo
-        - application: oppfolgingsplan
+        - application: syfo-oppfolgingsplan-frontend
+          namespace: team-esyfo
+        - application: bro-frontend
           namespace: team-esyfo
   env:
   {{#each env}}
