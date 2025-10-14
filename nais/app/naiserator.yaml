@@ -92,6 +92,8 @@ spec:
           namespace: team-esyfo
         - application: oppfolgingsplan
           namespace: team-esyfo
+        - application: bro-frontend
+          namespace: team-esyfo
   env:
   {{#each env}}
      - name: {{@key}}
