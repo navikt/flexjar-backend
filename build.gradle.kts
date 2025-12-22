@@ -27,7 +27,7 @@ repositories {
 val testContainersVersion = "2.0.2"
 val logstashLogbackEncoderVersion = "9.0"
 val kluentVersion = "1.73"
-val tokenSupportVersion = "5.0.30"
+val tokenSupportVersion = "6.0.1"
 
 dependencies {
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
