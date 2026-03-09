@@ -51,7 +51,7 @@ dependencies {
     testImplementation("org.awaitility:awaitility")
     testImplementation("no.nav.security:token-validation-spring-test:$tokenSupportVersion")
     testImplementation("org.amshove.kluent:kluent:$kluentVersion")
-    testImplementation("io.github.serpro69:kotlin-faker:1.16.0")
+    testImplementation("io.github.serpro69:kotlin-faker:1.16.1")
 }
 
 ktlint {
