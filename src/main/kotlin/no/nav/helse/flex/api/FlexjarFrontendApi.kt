@@ -1,6 +1,5 @@
 package no.nav.helse.flex.api
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.helse.flex.clientidvalidation.ClientIdValidation
 import no.nav.helse.flex.objectMapper
 import no.nav.helse.flex.repository.FeedbackDbRecord
@@ -11,6 +10,7 @@ import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import tools.jackson.module.kotlin.readValue
 import java.util.*
 import kotlin.collections.HashMap
 import kotlin.math.ceil

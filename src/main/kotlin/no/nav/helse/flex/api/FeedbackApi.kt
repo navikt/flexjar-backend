@@ -1,6 +1,5 @@
 package no.nav.helse.flex.api
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.helse.flex.objectMapper
 import no.nav.helse.flex.repository.FeedbackDbRecord
 import no.nav.helse.flex.repository.FeedbackRepository
@@ -10,6 +9,7 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
+import tools.jackson.module.kotlin.readValue
 import java.time.OffsetDateTime
 
 @RestController
