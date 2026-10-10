@@ -1,6 +1,5 @@
 package no.nav.helse.flex
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.helse.flex.api.FeedbackDto
 import no.nav.helse.flex.api.TagDto
 import org.amshove.kluent.shouldHaveSize
@@ -11,6 +10,7 @@ import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import tilFeedbackPage
+import tools.jackson.module.kotlin.readValue
 
 class InfoskjermApiTest : FellesTestOppsett() {
     @AfterEach
