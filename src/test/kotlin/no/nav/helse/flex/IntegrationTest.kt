@@ -1,6 +1,5 @@
 package no.nav.helse.flex
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.helse.flex.api.FeedbackPage
 import no.nav.helse.flex.api.TagDto
 import no.nav.helse.flex.repository.FeedbackDbRecord
@@ -13,6 +12,7 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import tilFeedbackPage
+import tools.jackson.module.kotlin.readValue
 import java.time.OffsetDateTime
 
 class IntegrationTest : FellesTestOppsett() {
