@@ -63,13 +63,13 @@ spec:
         maintenance:
           day: 2
           hour: 2
+        {{#if db_flags}}
         flags:
-          - name: cloudsql.logical_decoding
-            value: "on"
         {{#each db_flags}}
           - name: {{@key}}
             value: "{{this}}"
         {{/each}}
+        {{/if}}
   accessPolicy:
     inbound:
       rules:
