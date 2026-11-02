@@ -23,7 +23,7 @@ repositories {
 
 val testContainersVersion = "2.0.5"
 val logstashLogbackEncoderVersion = "9.0"
-val kluentVersion = "1.73"
+val kotestVersion = "6.2.6"
 val tokenSupportVersion = "6.0.12"
 
 dependencies {
@@ -50,7 +50,7 @@ dependencies {
     testImplementation("org.testcontainers:testcontainers-postgresql:$testContainersVersion")
     testImplementation("org.awaitility:awaitility")
     testImplementation("no.nav.security:token-validation-spring-test:$tokenSupportVersion")
-    testImplementation("org.amshove.kluent:kluent:$kluentVersion")
+    testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
     testImplementation("io.github.serpro69:kotlin-faker:1.16.2")
 }
 

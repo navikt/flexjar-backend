@@ -1,8 +1,8 @@
 package no.nav.helse.flex
 
+import io.kotest.matchers.collections.shouldHaveSize
 import no.nav.helse.flex.api.FeedbackDto
 import no.nav.helse.flex.api.TagDto
-import org.amshove.kluent.shouldHaveSize
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType

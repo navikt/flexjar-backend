@@ -1,11 +1,11 @@
 package no.nav.helse.flex
 
+import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.comparables.shouldBeLessThanOrEqualTo
+import io.kotest.matchers.shouldBe
 import no.nav.helse.flex.api.FeedbackPage
 import no.nav.helse.flex.api.TagDto
 import no.nav.helse.flex.repository.FeedbackDbRecord
-import org.amshove.kluent.shouldBeEqualTo
-import org.amshove.kluent.shouldBeLessOrEqualTo
-import org.amshove.kluent.shouldHaveSize
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
@@ -46,7 +46,7 @@ class IntegrationTest : FellesTestOppsett() {
         val lagredeFeilmeldigner = feedbackRepository.findAll()
         lagredeFeilmeldigner shouldHaveSize 1
         val lagretFeilmelding = lagredeFeilmeldigner.first()
-        lagretFeilmelding.opprettet shouldBeLessOrEqualTo OffsetDateTime.now()
+        lagretFeilmelding.opprettet shouldBeLessThanOrEqualTo OffsetDateTime.now()
 
         val deserialsert =
             mockMvc
@@ -60,14 +60,14 @@ class IntegrationTest : FellesTestOppsett() {
         deserialsert.content
             .first()
             .feedback
-            .get("app") shouldBeEqualTo "spinnsyn-frontend"
+            .get("app") shouldBe "spinnsyn-frontend"
         val feedbackUtenApp =
             deserialsert.content
                 .first()
                 .feedback
                 .toMutableMap()
                 .also { it.remove("app") }
-        feedbackUtenApp shouldBeEqualTo feedbackInn
+        feedbackUtenApp shouldBe feedbackInn
 
         mockMvc
             .perform(
@@ -83,8 +83,8 @@ class IntegrationTest : FellesTestOppsett() {
             .tilFeedbackPage()
             .also {
                 it.content shouldHaveSize 1
-                it.totalElements shouldBeEqualTo 1
-                it.totalPages shouldBeEqualTo 1
+                it.totalElements shouldBe 1
+                it.totalPages shouldBe 1
             }
 
         mockMvc
@@ -95,8 +95,8 @@ class IntegrationTest : FellesTestOppsett() {
             .tilFeedbackPage()
             .also {
                 it.content shouldHaveSize 0
-                it.totalElements shouldBeEqualTo 0
-                it.totalPages shouldBeEqualTo 0
+                it.totalElements shouldBe 0
+                it.totalPages shouldBe 0
             }
 
         mockMvc
@@ -116,8 +116,8 @@ class IntegrationTest : FellesTestOppsett() {
             .tilFeedbackPage()
             .also {
                 it.content shouldHaveSize 1
-                it.totalElements shouldBeEqualTo 1
-                it.totalPages shouldBeEqualTo 1
+                it.totalElements shouldBe 1
+                it.totalPages shouldBe 1
             }
 
         mockMvc
@@ -128,8 +128,8 @@ class IntegrationTest : FellesTestOppsett() {
             .tilFeedbackPage()
             .also {
                 it.content shouldHaveSize 0
-                it.totalElements shouldBeEqualTo 0
-                it.totalPages shouldBeEqualTo 0
+                it.totalElements shouldBe 0
+                it.totalPages shouldBe 0
             }
     }
 
@@ -144,7 +144,7 @@ class IntegrationTest : FellesTestOppsett() {
                 .andReturn()
                 .response.contentAsString
 
-        contentAsString shouldBeEqualTo "{\"content\":[],\"totalPages\":0,\"totalElements\":0,\"size\":10,\"number\":0}"
+        contentAsString shouldBe "{\"content\":[],\"totalPages\":0,\"totalElements\":0,\"size\":10,\"number\":0}"
     }
 
     @Test
@@ -183,7 +183,7 @@ class IntegrationTest : FellesTestOppsett() {
                     .header("Authorization", "Bearer ${skapAzureJwt()}"),
             ).andExpect(status().isOk)
             .andReturn()
-            .response.contentAsString shouldBeEqualTo
+            .response.contentAsString shouldBe
             "{\"flex\":[\"sykepengesoknad\",\"spinnsyn-frontend\"]}"
     }
 
@@ -227,7 +227,7 @@ class IntegrationTest : FellesTestOppsett() {
                 .tilFeedbackPage()
 
         result.content shouldHaveSize 1
-        result.content[0].team shouldBeEqualTo "team_annet"
+        result.content[0].team shouldBe "team_annet"
     }
 
     @Test
@@ -284,7 +284,7 @@ class IntegrationTest : FellesTestOppsett() {
                     .header("Authorization", "Bearer ${skapAzureJwt()}"),
             ).andExpect(status().isOk)
             .andReturn()
-            .response.contentAsString shouldBeEqualTo "[]"
+            .response.contentAsString shouldBe "[]"
 
         mockMvc
             .perform(
@@ -306,7 +306,7 @@ class IntegrationTest : FellesTestOppsett() {
         val deserialsert: FeedbackPage = objectMapper.readValue(response)
         deserialsert.content shouldHaveSize 1
         val first = deserialsert.content.first()
-        first.feedback shouldBeEqualTo feedbackInn
+        first.feedback shouldBe feedbackInn
         first.tags.shouldHaveSize(0)
 
         mockMvc
@@ -342,7 +342,7 @@ class IntegrationTest : FellesTestOppsett() {
         val deserialserNy: FeedbackPage = objectMapper.readValue(responseNy)
         deserialserNy.content shouldHaveSize 1
         val oppdatert = deserialserNy.content.first()
-        oppdatert.tags.shouldBeEqualTo(setOf("stjerne", "yrkesskade"))
+        oppdatert.tags.shouldBe(setOf("stjerne", "yrkesskade"))
 
         // Tags etterpå
         mockMvc
@@ -351,7 +351,7 @@ class IntegrationTest : FellesTestOppsett() {
                     .header("Authorization", "Bearer ${skapAzureJwt()}"),
             ).andExpect(status().isOk)
             .andReturn()
-            .response.contentAsString shouldBeEqualTo "[\"yrkesskade\",\"stjerne\"]"
+            .response.contentAsString shouldBe "[\"yrkesskade\",\"stjerne\"]"
 
         // Tags har riktig lengde
         val responseMedEnFeedback =
@@ -391,7 +391,7 @@ class IntegrationTest : FellesTestOppsett() {
                     .header("Authorization", "Bearer ${skapAzureJwt()}"),
             ).andExpect(status().isOk)
             .andReturn()
-            .response.contentAsString shouldBeEqualTo "[\"stjerne\"]"
+            .response.contentAsString shouldBe "[\"stjerne\"]"
 
         // Fungerer å se etter tag
         mockMvc
