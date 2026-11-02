@@ -1,7 +1,7 @@
 package no.nav.helse.flex
 
-import org.amshove.kluent.shouldBeEqualTo
-import org.amshove.kluent.shouldBeNull
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
@@ -45,13 +45,13 @@ class OppdateringAzureApiTest : FellesTestOppsett() {
             ).andExpect(status().isOk)
             .tilFeedbackPage()
             .also {
-                it.totalPages shouldBeEqualTo 1
-                it.totalElements shouldBeEqualTo 1
+                it.totalPages shouldBe 1
+                it.totalElements shouldBe 1
                 it.content
                     .first()
                     .feedback["feedback"]
                     .shouldBeNull()
-                it.content.first().id shouldBeEqualTo feedbackResponse.id
+                it.content.first().id shouldBe feedbackResponse.id
             }
 
         val oppdatertFeedback =
@@ -74,10 +74,10 @@ class OppdateringAzureApiTest : FellesTestOppsett() {
             ).andExpect(status().isOk)
             .tilFeedbackPage()
             .also {
-                it.totalPages shouldBeEqualTo 1
-                it.totalElements shouldBeEqualTo 1
-                it.content.first().feedback["feedback"] shouldBeEqualTo "min oppdaterte tekst"
-                it.content.first().id shouldBeEqualTo feedbackResponse.id
+                it.totalPages shouldBe 1
+                it.totalElements shouldBe 1
+                it.content.first().feedback["feedback"] shouldBe "min oppdaterte tekst"
+                it.content.first().id shouldBe feedbackResponse.id
             }
     }
 
